@@ -47,10 +47,12 @@ function [] = printFig(vars, Psai, hasFigure, saveFigName)
     for i = 1:size(vars.MagPos,1)
         drawCylindricalMagnet(L,D,vars.MagPos(i,:),'texture','axial')
     end
+    %
     eq_point1 = [-0.05 0.05];
-eq_point2 = [+0.03 +0.02];
+    eq_point2 = [+0.03 +0.02];
     plot(eq_point1(1), eq_point1(2), 'rx', 'MarkerSize', 15,'LineWidth',2);
     plot(eq_point2(1), eq_point2(2), 'rx', 'MarkerSize', 15,'LineWidth',2);
+    %
     title('\textbf{Force Field}','interpreter','latex', 'fontsize',14)
     xlabel('x [m]','interpreter','latex')
     ylabel('y [m]','interpreter','latex')

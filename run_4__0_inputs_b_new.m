@@ -4,6 +4,7 @@
 
 clc, close all, clearvars
 addpath(genpath('functions'))
+
 %% Define parameters
 args.mu_0 = 4*pi*1e-7;
 args.M    = 1.2706/args.mu_0;              % Magnetization   [A/m]
@@ -20,7 +21,11 @@ args.pm.L = args.pm.L * 1e0; %%%%%%%%% note
 args.pm.D = args.pm.D * 1e0; %%%%%%%%% note
 %
 %
-% values --> [x y z m_norm mu_0 m_agents]
+vars = args;
+vars.args = args;
+
+%% Define PMs locations
+% values --> [x y z m_norm mu_0 m_agents]  for PMs
 a = [0.25 0.25 0.25];
 z = 0.0;
 phi = [30 150 270 -30 90 210]*pi/180;%phi = [30 150 270]*pi/180;
@@ -38,27 +43,27 @@ MagPos = [values(:,1:3) ones(size(values,1),1) zeros(size(values,1),2)];
 for i=1:size(MagPos, 1)
     MagPos(i,4:6) = round(MagPos(i,4:6) ./ norm(MagPos(i,4:6)), 5);
 end
-vars = args;
-vars.args = args;
+%
+%
 vars.values = values;
 vars.MagPos = MagPos;
 vars.phi = phi;
 
-
-
-%% Define parameters
+%% Define space and plot parameters
 domain = max(a) - 0.12;
 step   = 0.01;
 plotDomain = max(a) + 0.02;
 spaceRegion = -domain:step:domain;
 x_space = spaceRegion; z_space = x_space; y_space = x_space;
 Npoints_space = length(x_space);
+%
+%
 vars.x_space = x_space;
 vars.y_space = y_space;
 vars.z_space = z_space;
 vars.plotDomain = plotDomain;
-%
-tspan = 0:1:500;%tspan = 0:1/5:120;%tspan = 0:1/24:30;
+
+%% Define MRs locations
 x_mr_ = min(x_space)+0.02:0.1:max(x_space)-0.02; % x_mr_ = [ 0.06 0.05 0.04 0.061 0.051 0.041];
 y_mr_ = min(y_space)+0.02:0.1:max(y_space)-0.02; % y_mr_ = [ 0.06 0.05 0.04 0.061 0.051 0.041];
 % x_mr_ = [ -0.010 -0.005 0.00 0.005 0.010 ];
@@ -67,10 +72,41 @@ y_mr_ = min(y_space)+0.02:0.1:max(y_space)-0.02; % y_mr_ = [ 0.06 0.05 0.04 0.06
 x_mr_0 = reshape(x_mr__, 1, []);
 y_mr_0 = reshape(y_mr__, 1, []);
 %
-vars.tspan = tspan;
+%
 vars.x_mr_0 = x_mr_0;
 vars.y_mr_0 = y_mr_0;
+
+%% Define path and eqPoints desired locations during simulation time
+
+% path inputs --> [point1 point2 startTime endTime dt]
+p1 = [-0.05 0.05];
+p2 = [-0.02 0.08];
+[path1] = defineDesiredPath(p1, p2, 0, 10, 1);
+p1 = [+0.05 0.02];
+p2 = [-0.02 0.04];
+[path2] = defineDesiredPath(p1, p2, 0, 10, 1);
 %
+%
+% eqPoint = [t1 t2 t3 ...; x1 x2 x3 ...; y1 y2 y3 ...]
+eqPoint1 = [path1 [20;.1;.1] [30;.2;.2] ];
+eqPoint2 = [path2];
+%
+%
+tspan = 0:1:100;%tspan = 0:1/5:120;%tspan = 0:1/24:30;
+%
+%
+vars.tspan = tspan;
+vars.eqPoint1 = eqPoint1;
+vars.eqPoint2 = eqPoint2;
+
+% % [eq_x,eq_y] = findEqPoints_Dynamics(x_space,y_space,Psai_0);
+% [eq_x,eq_y] = findEqPoints_Minimization(x_space,y_space,Psai_0);
+% vars.eqPoints.x_eqPoints_0 = eq_x;
+% vars.eqPoints.y_eqPoints_0 = eq_y;
+
+designPsaiController(vars);
+
+%% Define filing configs
 counterName = 1;
 cd('data')
 fileName1 = '';
@@ -87,9 +123,9 @@ vars.fileName1 = fileName1;
 vars.fileName2 = fileName2;
 vars.fileName3 = fileName3;
 cd('..')
-
-
-
+%
+%
+%
 dlgTitle    = 'PreCalculations';
 dlgQuestion = 'Do you want symbolic calculations to be done ?';
 choice = questdlg(dlgQuestion,dlgTitle,'Yes','No', 'Yes');
@@ -165,33 +201,8 @@ printFig(vars, Psai_0, 0);
 [Bx2, By2, Bz2] = CylBfield3(Psai_0,eq_point2);
 
 
-% [eq_x,eq_y] = findEqPoints_Dynamics(x_space,y_space,Psai_0);
-[eq_x,eq_y] = findEqPoints_Minimization(x_space,y_space,Psai_0);
-vars.eqPoints.x_eqPoints_0 = eq_x;
-vars.eqPoints.y_eqPoints_0 = eq_y;
 
 
-
-vars.dPath.indexInsideEqPoints = 1;
-vars.dPath.dt = 0.2;
-vars.dPath.startTime = 30;
-vars.dPath.endTime = 60;
-vars.dPath.maxDisp = 0.1;
-
-
-
-idx = vars.dPath.indexInsideEqPoints;
-% point_0 = [eq_x(idx); eq_y(idx)];
-point_0 = [0; 0];
-[x_desiredPath1,y_desiredPath1] = defineDesiredPath(point_0,vars.dPath);
-vars.dPath.x_desiredPath1 = x_desiredPath1;
-vars.dPath.y_desiredPath1 = y_desiredPath1;
-point_0 = [-0.05; -0.05];
-[x_desiredPath2,y_desiredPath2] = defineDesiredPath(point_0,vars.dPath);
-vars.dPath.x_desiredPath2 = x_desiredPath2;
-vars.dPath.y_desiredPath2 = y_desiredPath2;
-
-[x_eqPoints_0] = designPsaiController(vars);
 
 %%
 

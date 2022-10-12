@@ -1,4 +1,4 @@
-function [] = designPsaiController(inputs)
+function [x_eqPoints_0] = designPsaiController(inputs)
 
     eqPoint1 = inputs.eqPoint1;
     eqPoint2 = inputs.eqPoint2;
@@ -63,19 +63,20 @@ function [] = designPsaiController(inputs)
 
 
     fid = fopen('psaiController.m', 'wt');
-    fprintf(fid, 'function [Psai,eqPoint1,eqPoint2,targetInd,real_eqPoint_x,real_eqPoint_y] = psaiController(t)\n');
-    fprintf(fid, 'time = [');
-    fprintf(fid, '%f ', time);
-    fprintf(fid, '];\n');
-    fprintf(fid, 'temp = time - t;\n');
-    fprintf(fid, 'for k = 1:length(temp)\n');
-    fprintf(fid, '\tif temp(k) > 0\n');
-    fprintf(fid, '\t\tind = k-1;\n');
-    fprintf(fid, '\t\tbreak;\n');
-    fprintf(fid, '\telseif k == length(temp)\n');
-    fprintf(fid, '\t\tind = k;\n');
-    fprintf(fid, '\tend\n');
-    fprintf(fid, 'end\n');
+    fprintf(fid, 'function [Psai,target_eqPoint_x,eqPoint2,targetInd,real_eqPoint_x,real_eqPoint_y] = psaiController(t)\n');
+    fprintf(fid, 'time = [%f];\n', time);
+    fprintf(fid, 'temp = time1 - t;');
+    fprintf(fid, 'for k = 1:length(temp);');
+    fprintf(fid, '\tif temp(k) > 0;');
+            if temp(k) > 0
+                eqP1(:,i) = eqPoint1(:,k-1);
+                break;
+            elseif k == length(temp)
+                eqP1(:,i) = eqPoint1(:,end);
+            end
+        end
+    fprintf(fid, 'ind = floor(t/dt) + 1;\n');
+    fprintf(fid, 'ind = min(ind, %d);\n', maxIter);
     fprintf(fid, 'eqPoint1 = [\n');
     for i=2:3
         fprintf(fid, '\t');
@@ -114,8 +115,8 @@ function [] = designPsaiController(inputs)
     fprintf(fid, 'Psai = Psai_sequence(:,ind);\n');
     fprintf(fid, 'if nargout > 1\n');
     fprintf(fid, '\ttargetInd = ind;\n');
-    fprintf(fid, '\teqPoint1 = eqPoint1(:,ind);\n');
-    fprintf(fid, '\teqPoint2 = eqPoint2(:,ind);\n');
+    fprintf(fid, '\ttarget_x = target_x_sequence;\n');
+    fprintf(fid, '\ttarget_y = target_y_sequence;\n');
     fprintf(fid, '\treal_eqPoint_x = real_eqPoint_x_sequence(:,ind);\n');
     fprintf(fid, '\treal_eqPoint_y = real_eqPoint_y_sequence(:,ind);\n');
     fprintf(fid, 'end\n');

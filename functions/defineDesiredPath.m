@@ -1,23 +1,11 @@
-function [x_desiredPath,y_desiredPath] = defineDesiredPath(point,inputs)
-
-    pointIndexInsideEqPoints = inputs.indexInsideEqPoints;
-    dt = inputs.dt;
-    startTime = inputs.startTime;
-    endTime = inputs.endTime;
-    totalTime = endTime - startTime;
-    maxDisp = inputs.maxDisp;
-    maxIter = endTime/dt + 1;
-    x_desiredPath(1) = point(1);
-    y_desiredPath(1) = point(2);
-    for i=2:maxIter
-        if dt*i >= startTime
-            time = (dt*(i-1) - startTime) / totalTime; % from 0 to 1
-            x_desiredPath(i) = x_desiredPath(1) + maxDisp*(time);
-            y_desiredPath(i) = -maxDisp*(time)^4 + y_desiredPath(1);
-        else
-            x_desiredPath(i) = x_desiredPath(1);
-            x_desiredPath(i) = x_desiredPath(1);
-        end
+function [desiredPath] = defineDesiredPath(point1, point2, startTime, endTime, dt)
+    time = startTime:dt:endTime;
+    for i=1:length(time)
+        desiredPath(1,i) = time(i);
+        desiredPath(2,i) = point1(1) + (point2(1)-point1(1)) * (time(i)-startTime)/(endTime-startTime);
+        desiredPath(3,i) = point1(2) + (point2(2)-point1(2)) * (time(i)-startTime)/(endTime-startTime);
+        %x_desiredPath(i) = x_desiredPath(1) + maxDisp*(time);
+        %y_desiredPath(i) = -maxDisp*(time)^4 + y_desiredPath(1);
     end
 end
 

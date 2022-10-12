@@ -16,13 +16,13 @@ waitIters = size(ans1,1);
 waitHandle = waitbar(0,waitText);
 for i=1:size(ans1,1)
     waitbar(i/waitIters,waitHandle, waitText);
-    [Psai,target_x_seq,target_y_seq,targetInd,real_eqPoint_x_seq,real_eqPoint_y_seq] = psaiController(t(i));
+    [Psai,eqPoint1,eqPoint2,targetInd,real_eqPoint_x_seq,real_eqPoint_y_seq] = psaiController(t(i));
 %     Psai = psaiController(t(i));
     [~, Frho, Faxial] = calculateForceField(vars.x_space,vars.y_space,Psai);
     forceField(i).Frho = Frho;
     forceField(i).Faxial = Faxial;
-    forceField(i).target_x_seq = target_x_seq;
-    forceField(i).target_y_seq = target_y_seq;
+    forceField(i).eqPoint1 = eqPoint1;
+    forceField(i).eqPoint2 = eqPoint2;
     forceField(i).targetInd = targetInd;
     forceField(i).real_eqPoint_x_seq = real_eqPoint_x_seq;
     forceField(i).real_eqPoint_y_seq = real_eqPoint_y_seq;
@@ -33,7 +33,7 @@ close(waitHandle)
 
 
 %%
-p1 = figure(1);
+p1 = figure(2);
 set(p1, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 set(gcf, 'color', 'w');
 % pause(2)
@@ -54,8 +54,8 @@ for i=1:size(ans1,1)
     %
     %
 %     hold on
-%     plot_field = streamslice(vars.x_space,vars.y_space,forceField(i).Frho,forceField(i).Faxial,'method','cubic');
-%     set(plot_field,'Color','black','LineWidth',1.2);
+    plot_field = streamslice(vars.x_space,vars.y_space,forceField(i).Frho,forceField(i).Faxial,'method','cubic');
+    set(plot_field,'Color','black','LineWidth',1.2);
     %
     plot(vars.MagPos(:,1), vars.MagPos(:,2), 'g.', 'MarkerSize', 15)
     %
