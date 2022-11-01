@@ -12,6 +12,7 @@ function [] = printFig(vars, Psai, hasFigure, saveFigName)
     %
     [~, Frho, Faxial] = calculateForceField(vars.x_space,vars.y_space,Psai);
     [~, Brho, Baxial] = calculateMagneticField(vars.x_space,vars.y_space,Psai);
+    options = vars.plotOptions.static;
     
     %%
     if nargin < 3
@@ -48,10 +49,10 @@ function [] = printFig(vars, Psai, hasFigure, saveFigName)
         drawCylindricalMagnet(L,D,vars.MagPos(i,:),'texture','axial')
     end
     %
-    eq_point1 = [-0.05 0.05];
-    eq_point2 = [+0.03 +0.02];
-    plot(eq_point1(1), eq_point1(2), 'rx', 'MarkerSize', 15,'LineWidth',2);
-    plot(eq_point2(1), eq_point2(2), 'rx', 'MarkerSize', 15,'LineWidth',2);
+    if options.plotEqPoints
+        plot(options.eq_point1(1), options.eq_point1(2), 'rx', 'MarkerSize', 15,'LineWidth',2);
+        plot(options.eq_point2(1), options.eq_point2(2), 'rx', 'MarkerSize', 15,'LineWidth',2);
+    end
     %
     title('\textbf{Force Field}','interpreter','latex', 'fontsize',14)
     xlabel('x [m]','interpreter','latex')

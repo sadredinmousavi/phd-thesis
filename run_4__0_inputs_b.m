@@ -2,104 +2,37 @@
  % This script is a DEMO for the visualization of the magnetic flux density 
  % field lines of an axially magnetized cylinder. 
 
- 
- % run symboic.m and f -> force_field_symbolic.m
- 
- % todo MagPosR -> input to symbolic.m ; automatically generate force_field_symbolic.m
-clc, close all, clearvars -except cursor_info
-%%
-mu_0 = 4*pi*1e-7;
-M = 1.2706/mu_0;              % Magnetization   [A/m]
-% magnets
-L = 0.004;
-D = 0.002;
-m = M * (pi*D^2/4*L);
-args.L = L;
-args.D = D;
-% agents
-L = 0.0004;
-D = 0.0002;
-m_agents = M * (pi*D^2/4*L);
-m_agents = m_agents * 1e3; %%%%%%%%% note
-%
-%
-
-%[x y z m_norm mu_0 m_agents]
-% values = [
-% %     0.06 0.06 0.1 m mu_0 m_agents
-% %     -0.06 0.06 0.1 m mu_0 m_agents
-% %     -0.06 -0.06 0.1 m mu_0 m_agents
-% %     0.06 -0.06 0.1 m mu_0 m_agents
-% %     0.06*cosd(30) 0.06*sind(30) 0.1 m mu_0 m_agents
-%     -0.06*cosd(30) 0.06*sind(30) 0.1 m mu_0 m_agents
-%     0 -0.09 0.1 m mu_0 m_agents
-%     
-% ];
-a = 0.25;
-z = 0.1;
-values = [
-    a*cosd(30) a*sind(30) z m mu_0 m_agents
-    -a*cosd(30) a*sind(30) z m mu_0 m_agents
-    0 -a z m mu_0 m_agents
-];
-% values = [
-%     0 +a z m mu_0 m_agents
-%     0 -a z m mu_0 m_agents
-% ];
+clc, close all, clearvars
+addpath(genpath('functions'))
 
 
-MagPos = [values(:,1:3) zeros(size(values,1),3)];
+inputFile003
+
+
+
+
+%% Define parameters
+vars = args;
+vars.args = args;
+
+
+%% Define PMs locations
+% values --> [x y z m_norm mu_0 m_agents]  for PMs
+MagPos = [values(:,1:3) ones(size(values,1),1) zeros(size(values,1),2)];
 for i=1:size(MagPos, 1)
     MagPos(i,4:6) = round(MagPos(i,4:6) ./ norm(MagPos(i,4:6)), 5);
 end
-
-
-Psai1 = 40*pi/180;
-Point = [-0.00 0.01];
-%%%
-% Psai_0 = calcPsai2(Point(1), Point(2), MagPos);
-%%%
-Psai_0 = calcPsai3(Point(1), Point(2), MagPos, Psai1);
-%%%
-
-
-% Psai_0 = zeros(size(values,1),1);
-% Psai_0 = [
-% %     30
-%     150
-%     -90
-% ]*pi/180;
-% Psai_0 = Psai_0 + [
-% %     0
-%     0
-%     -75
-% ]*pi/180;
-
-
-
 %
 %
-
-spaceRegion = -0.3:0.01:0.3;
-x = spaceRegion; z = x; y = x;
-Npoints = length(x);
-
+vars.values = values;
+vars.MagPos = MagPos;
+vars.phi = phi;
 %
-%
+vars.calcPsaiFromEqFunc = calcPsaiFromEqFunc;
+vars.findEqFromMinimization = findEqFromMinimization;
 
-tspan = 0:1/5:30;%tspan = 0:1/24:30;
-% x = [ -0.1 0.05 0.1];
-% y = [ 0.1 0.05 0.15];
-% x_ = [ 0.06 0.05 0.04 0.061 0.051 0.041];
-% y_ = [ 0.06 0.05 0.04 0.061 0.051 0.041];
-x__ = min(x)+0.1:0.1:max(x)-0.1;
-y__ = min(y)+0.1:0.1:max(y)-0.1;
-[x_,y_] = meshgrid(x__,y__);
-x_ = reshape(x_, 1, []);
-y_ = reshape(y_, 1, []);
 
-%
-%
+%% Define filing configs
 counterName = 1;
 cd('data')
 fileName1 = '';
@@ -110,66 +43,215 @@ while strcmp(fileName1, '')
         fileName1 = [num2str(counterName) '_input.mat'];
         fileName2 = [num2str(counterName) '_movie.gif'];
         fileName3 = [num2str(counterName) '_datas.mat'];
-        fileName4 = [num2str(counterName) '_cursor.mat'];
-        fileName5 = [num2str(counterName) '_all_vars.mat'];
     end
 end
+vars.fileName1 = fileName1;
+vars.fileName2 = fileName2;
+vars.fileName3 = fileName3;
 cd('..')
-
-
-
-dlgTitle    = 'PreCheck';
-dlgQuestion = 'Do you want to pre check?';
+%
+%
+%
+dlgTitle    = 'PreCalculations';
+dlgQuestion = 'Do you want symbolic calculations to be done ?';
 choice = questdlg(dlgQuestion,dlgTitle,'Yes','No', 'Yes');
 if strcmp(choice, 'Yes') == 1
-    DoHandPreCheck = 1;
-    symbolic_fun_b(values, fileName3);
+    DoPreCalc = 1;
+    symbolicFunctionHandle(values, fileName3, vars);
 else
-    DoHandPreCheck = 0;
+    DoPreCalc = 0;
+end
+vars.DoPreCalc = DoPreCalc;
+% makeFunctionsFromSymbolic(b, b_m, str_psai, str_psai_sym) % inside _datas
+
+
+%% Define space and plot parameters and options
+vars.x_space = x_space;
+vars.y_space = y_space;
+vars.z_space = z_space;
+vars.plotDomain = plotDomain;
+%
+vars.plotOptions.dynamic = plotOptionsDyn;
+
+
+%% Define MRs locations
+vars.x_mr_0 = x_mr_0;
+vars.y_mr_0 = y_mr_0;
+
+
+%% calculate Psai_0 in order to have equilibrium in 2 points (using 4 or 6 magnets)
+dlgTitle    = 'Hand Calculations';
+dlgQuestion = 'Do you want eqPoint calculations to be done ?';
+choice = questdlg(dlgQuestion,dlgTitle,'Yes','No', 'Yes');
+if strcmp(choice, 'Yes') == 1
+    % eqPoint1 = [ [0;+0.05;+0.00] [300;+0.03;+0.04] [600;+0.03;+0.09] ];
+    % eqPoint2 = [ [0;-0.11;-0.02] [300;-0.10;-0.09] [600;+0.07;-0.10] ];
+    eq_point1 = [-0.00001 +0.00];
+    eq_point2 = [+0.00 -0.000001];
+    vars.plotOptions.static.plotEqPoints = 1;
+    vars.plotOptions.static.eq_point1 = eq_point1;
+    vars.plotOptions.static.eq_point2 = eq_point2;
+    
+
+    [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_point1, eq_point2, MagPos);
+    
+%     PsaiSerie = otherOutputs.PsaiSerie;
+%     for cnt=1:length(PsaiSerie)
+%         Psai = PsaiSerie(:,cnt);
+%         printFig(vars, Psai, 0);
+%     end
+    
+    %
+    [Fx1, Fy1, Fz1] = CylFfield3(Psai,eq_point1);
+    [Bx1, By1, Bz1] = CylBfield3(Psai,eq_point1);
+    %
+    [Fx2, Fy2, Fz2] = CylFfield3(Psai,eq_point2);
+    [Bx2, By2, Bz2] = CylBfield3(Psai,eq_point2);
+    %
+    printFig(vars, Psai, 0);
+    %
+    [V,D] = eig(hessian.point1); % V(:,i)
+    angle1_point1 = atan(V(2,1)/V(1,1))*(180/pi);
+    angle2_point1 = atan(V(2,2)/V(1,2))*(180/pi);
+    d1_point1 = D(1,1);
+    d2_point1 = D(2,2);
+    [V,D] = eig(hessian.point2); % V(:,i)
+    angle1_point2 = atan(V(2,1)/V(1,1))*(180/pi);
+    angle2_point2 = atan(V(2,2)/V(1,2))*(180/pi);
+    d1_point2 = D(1,1);
+    d2_point2 = D(2,2);
+
+
+
+    newStep = 0.01;
+    figure
+    hold on
+    plot(MagPos(:,1), MagPos(:,2), 'r.', 'MarkerSize', 15)
+    plot(eq_point1(1), eq_point1(2), '+r')
+    for x=-domain:newStep:domain
+        for y=-domain:newStep:domain
+            [rankM, error, hasAns, isStable, Psai, hessian] = vars.calcPsaiFromEqFunc(eq_point1, [x y], MagPos);
+    %         if hasAns
+            if isStable && hasAns
+                plot(x, y, 'co')
+            else
+                plot(x, y, 'ko')
+            end
+            if hasAns
+                a=1;
+            end
+        end
+    end
+    axis square
 end
 
 
-[Fx, Fy, Fz] = CylFfield3(Psai_0,Point);
-[Bx, By, Bz] = CylBfield3(Psai_0,Point);
+%% calculate Psai_0 in order to have equilibrium in 3 points (using 6 magnets)
+% eq_point1 = [-0.02 +0.04];%eq_point1 = [-0.01 +0.05];
+% eq_point2 = [+0.04 -0.11];%eq_point2 = [+0.04 -0.13];
+% eq_point3 = [+0.04 -0.11];%eq_point3 = [+0.06 -0.11];
+% 
+% [rankM, error, hasAns, isStable, Psai] = check_6PM3(eq_point1, eq_point2, eq_point3, MagPos);
+% printFig(vars, Psai, 0);
+% newStep = 0.01;
+% 
+% allPointCount = 0;
+% equalPointCount = 0;
+% for x2=-domain:newStep:domain
+%     for y2=-domain:newStep:domain
+%         x3=x2;y3=y2;
+% %         for x3=-domain:newStep:domain
+% %             for y3=-domain:newStep:domain
+%                 [rankM,error, hasAns, isStable, Psai] = check_6PM3(eq_point1, [x2 y2], [x3 y3], MagPos);
+% %                 if hasAns
+%                 if isStable && hasAns
+%                     allPointCount = allPointCount + 1;
+%                     eqpoint1(allPointCount, :) = eq_point1;
+%                     eqpoint2(allPointCount, :) = [x2 y2];
+%                     eqpoint3(allPointCount, :) = [x3 y3];
+%                     if x2==x3 && y2==y3
+%                         equalPointCount = equalPointCount + 1;
+%                     end
+%                 end
+%                 if hasAns
+%                     a=1;
+%                 end
+% %             end
+% %         end
+%     end
+% end
+% %
+% figure
+% hold on
+% plot(MagPos(:,1), MagPos(:,2), 'r.', 'MarkerSize', 15)
+% plot(eq_point1(1), eq_point1(2), '+k')
+% for x=-domain:newStep:domain
+%     for y=-domain:newStep:domain
+%         plot(x, y, 'ko')
+%     end
+% end
+% for i=1:length(eqpoint2)
+%     plot(eqpoint2(i,1), eqpoint2(i,2), 'co')
+% end
 
 
-[F, Frho, Faxial] = calculateMagneticForce(x,y,Psai_0);
-[B, Brho, Baxial] = calculateMagneticField(x,y,Psai_0);
+%% Define path and eqPoints desired locations during simulation time
+% path inputs --> [point1 point2 startTime endTime dt]
+% % eqPoint = [t1 t2 t3 ...; x1 x2 x3 ...; y1 y2 y3 ...]
+vars.tspan = tspan;
+vars.eqPointsNum = eqPointsNum;
+vars.eqPoint1 = eqPoint1;
+vars.eqPoint2 = eqPoint2;
 
-[eq_x,eq_y] = findEqPoints(x,y,Psai_0);
+vars.usePrepaidPsai = usePrepaidPsai;
+if usePrepaidPsai
+    vars.Psai = Psai;
+end
+% % [eq_x,eq_y] = findEqPoints_Dynamics(x_space,y_space,Psai_0);
+% [eq_x,eq_y] = findEqPoints_Minimization(x_space,y_space,Psai_0);
+% vars.eqPoints.x_eqPoints_0 = eq_x;
+% vars.eqPoints.y_eqPoints_0 = eq_y;
 
-
+designPsaiController(vars);
 
 
 %%
-
-
-
-save('input_data')
 cd('data')
-save(fileName5)
+save(fileName1, '-struct', 'vars')
 cd('..')
 
-
-
-% printFig('input_data', Psai_0, [num2str(counterName) 'a']);
-
-
-% run_4__4
-% run_4__3
-if ~DoHandPreCheck
-%     run_4__3
-end
-
+run_4__1
 
 
 
 %%
-
-
-
-
-
+function [eqPoint1] = defineLinearPath(eqPoint0, eqPoint1, t0, refreshTime, speed)
+    point1_x0 = eqPoint0(1);
+    point1_y0 = eqPoint0(2);
+    point1_x1 = eqPoint1(1);
+    point1_y1 = eqPoint1(2);
+    %
+    speed_x = speed * (point1_x1-point1_x0)/sqrt((point1_x1-point1_x0)^2+(point1_y1-point1_y0)^2);
+    speed_y = speed * (point1_y1-point1_y0)/sqrt((point1_x1-point1_x0)^2+(point1_y1-point1_y0)^2);
+    t1 = max( abs( (point1_x1-point1_x0) / speed_x), abs( (point1_y1-point1_y0) / speed_y) );
+    time = 0:refreshTime:t1;
+    eqPoint1 = zeros(3,length(time));
+    for i=1:length(time)
+        eqPoint1(:,i) = [t0+time(i); point1_x0+speed_x*time(i); point1_y0+speed_y*time(i)];
+    end
+end
+%
+function [eqPoint1] = defineCirclePath(r, deg, t0, refreshTime, speed)
+    pointFunCyln = @(t,r,theta)[t; r*cos(theta*(pi/180)); r*sin(theta*(pi/180))];
+    omega = speed/r*(180/pi); %deg/s
+    t1 = abs( (deg(2)-deg(1)) / omega );
+    time = 0:refreshTime:t1;
+    eqPoint1 = zeros(3,length(time));
+    for i=1:length(time)
+        eqPoint1(:,i) = pointFunCyln(t0+time(i),r,deg(1)+omega*time(i));
+    end
+end
+%
 function [Bx, By, Bz] = CylBfield3(Psai,Point)
     B_ = magnetic_field_symbolic(Point(1), Point(2), Psai);
     Bx = B_(1);
@@ -182,94 +264,6 @@ function [Fx, Fy, Fz] = CylFfield3(Psai,Point)
     Fx = F(1);
     Fy = F(2);
     Fz = F(3);
-end
-%
-function [B, Brho, Baxial] = calculateMagneticField(x,y,Psai)
-    Npoints = length(x);
-    Brho  = zeros(Npoints,Npoints); Baxial  = Brho; B  = Brho;
-    %
-    for i = 1:Npoints
-        for j = 1:Npoints
-            Point = [x(j) y(i) 0];
-            [Bx1, By1, ~] = CylBfield3(Psai,Point');
-            %
-            Brho(i,j)   = Bx1 + Brho(i,j);
-            Baxial(i,j) = By1 + Baxial(i,j);
-        end
-    end
-    B = sqrt(Brho.^2+Baxial.^2);
-end
-%
-function [F, Frho, Faxial] = calculateMagneticForce(x,y,Psai)
-    Npoints = length(x);
-    Frho = zeros(Npoints,Npoints); Faxial = Frho; F1 = Frho;
-    %
-    for i = 1:Npoints
-        for j = 1:Npoints
-            Point = [x(j) y(i) 0];
-            [Fx1, Fy1, ~] = CylFfield3(Psai,Point');
-            %
-            Frho(i,j)   = Fx1 + Frho(i,j);
-            Faxial(i,j) = Fy1 + Faxial(i,j);
-        end
-    end
-    F = sqrt(Frho.^2+Faxial.^2);
-end
-%
-function [eq_x,eq_y] = findEqPoints(x, y, Psai, maxTime) % Frho ro begire va ba delF hesab kone na inke dynamics bere psiCont ro brgire
-    
-    if nargin < 4
-        maxTime = 150;
-    end
-    
-    x__ = min(x)+0.0:0.1:max(x)-0.0;
-    y__ = min(y)+0.0:0.1:max(y)-0.0;
-    [x_,y_] = meshgrid(x__,y__);
-    x_ = reshape(x_, 1, []);
-    y_ = reshape(y_, 1, []);
-%     x_ = 0.1;
-%     y_ = 0.1;
-    %
-    ans0 = [x_ y_ zeros(1,length(x_)) zeros(1,length(x_))];
-    [t,ans1] = ode45(@(t,y) systemDynamicsSimplified(t,y,Psai), [0 maxTime], ans0);
-    n = size(ans1,2)/4;
-    %
-%     ans0 = [x_ y_];
-%     ans1 = ans0;
-%     n = length(x_);
-%     [Frho_, Faxial_, ~] = CylFfield3(Psai,[ans0(1),ans1(1) 0]');
-%     gama = ones(1,n)/Frho_/10000;
-%     for i=1:100
-%         for j = 1:n
-%             [Frho(1,j), Faxial(1,j), ~] = CylFfield3(Psai,[ans1(j),ans1(n+j) 0]');
-%         end
-%         ans1(i+1,:) = ans1(i,:) + [gama.*Frho gama.*Faxial];
-%     end
-%     
-    %
-    [~, Frho, Faxial] = calculateMagneticForce(x,y,Psai);
-    plot(ans1(end,1:n),ans1(end,n+1:2*n),'b.','MarkerSize', 16);
-    hold on
-    for j=1:n
-        plot(ans1(:,j),ans1(:,n+j),'r-', 'LineWidth',1 );
-    end
-    plot_field = streamslice(x,y,Frho,Faxial,'method','cubic');
-    set(plot_field,'Color','black','LineWidth',1.2);
-    %
-    counter = 0;
-    for j=1:n
-        if ans1(end,j) == ans1(end-1,j)
-            plot(ans1(end,j),ans1(end,n+j),'g.','MarkerSize', 16);
-            counter = counter + 1;
-            eq_x(counter) = ans1(end,j); 
-            eq_y(counter) = ans1(end,n+j);
-        end
-    end
-    [C, ia, ic] = unique(round(eq_x,5));
-    eq_x = eq_x(ia);
-    eq_y = eq_y(ia);
-    %
-    a=1;
 end
 %
 function [MagPos] = sphericalToCartesian(MagPosR)
@@ -331,6 +325,8 @@ function [Psai] = calcPsai2(x, y, MagPos)
 %     [psai2,fval,exitflag,output] = fminsearch(@(psai) abs(myFun2(psai)),psai_0);
     error = myFun2(psai12);
     Psai = psai12;
+    %
+    %
 end
 %
 function [Psai] = calcPsai3(x, y, MagPos, Psai1)
@@ -375,39 +371,46 @@ function [Psai] = calcPsai3(x, y, MagPos, Psai1)
     %
     %
     %
-%     figure
-%     hold on
-%     xx = min(MagPos(:,1)):0.01:max(MagPos(:,1));
-%     yy = min(MagPos(:,2)):0.01:max(MagPos(:,2));
-%     for k1=1:length(xx)
-%         for k2=1:length(yy)
-%            for i=1:size(MagPos,1)
-%                 x_ = MagPos(i,1);
-%                 y_ = MagPos(i,2);
-%                 z_ = MagPos(i,3);            
-% 
-%                 r_(i,:) = [xx(k1)-x_ yy(k2)-y_];
-%                 r__(i,1) = sqrt( r_(i,1)^2 + r_(i,2)^2 + (0-z_)^2 );
-%             end
-%             counter = 0;
-%             c1 = 1/r__(1,1)^5;
-%             c2 = 1/r__(2,1)^5;
-%             c3 = 1/r__(3,1)^5;
-%             if c1+c2>c3
-%                 counter = counter + 1;
-%             end
-%             if c1+c3>c2
-%                 counter = counter + 1;
-%             end
-%             if c3+c2>c1
-%                 counter = counter + 1;
-%             end
-%             if counter == 3
-%                 plot(xx(k1), yy(k2), 'ro')
-%             else
-%                 plot(xx(k1), yy(k2), 'bo')
-%             end
-%         end
-%     end
+
     
+end
+%
+function [Psai_0,values] = calcPsaiNew(x, y, values, a, phi, z)
+    input_0 = [a 0.1 0.1 0.1];
+    input_0 = [a(1) 0.1 0.1 0.1];
+    opts = optimoptions(@fsolve,'Algorithm', 'levenberg-marquardt');
+    [ans,fval,exitflag,output] = fsolve(@(input)myFun0(input, phi, x, y, z),input_0,opts);
+    a = ans(1:3)';
+    Psai_0 = ans(4:6)';
+    values_ = [
+        a(1)*cos(phi(1)) a(1)*sin(phi(1))
+        a(2)*cos(phi(2)) a(2)*sin(phi(2))
+        a(3)*cos(phi(3)) a(3)*sin(phi(3))
+    ];
+    values = [values_ values(:,3:end)];
+end
+%
+function [ans] = myFun0(input, phi, x, y, z)
+%     a(1) = input(1);
+%     a(2) = input(2);
+%     a(3) = input(3);
+    a = [input(1) 0.25 0.25];
+    psai(1) = input(2);
+    psai(2) = input(3);
+    psai(3) = input(4);
+    for i=1:3
+        x_ = a(i)*cos(phi(i));
+        y_ = a(i)*sin(phi(i));
+        z_ = z;
+
+        r_(i,:) = [x-x_ y-y_];
+        r__(i,1) = sqrt( r_(i,1)^2 + r_(i,2)^2 + (0-z_)^2 );
+    end
+    c1 = 1/r__(1)^5;
+    c2 = 1/r__(2)^5;
+    c3 = 1/r__(3)^5;
+    ans = [
+        c1*sin(psai(1))+c2*sin(psai(2))+c3*sin(psai(3))
+        c1*cos(psai(1))+c2*cos(psai(2))+c3*cos(psai(3))
+        ];
 end

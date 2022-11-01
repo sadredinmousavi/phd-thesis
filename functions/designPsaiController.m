@@ -32,17 +32,28 @@ function [] = designPsaiController(inputs)
         end
         eqP2(1,i) = time(i);
         %
-%         [Psai_t(:,i)] = calculatePsai_3PM([eqP1(2,i), eqP1(3,i)], inputs.MagPos, 30*pi/180)';
-        [Psai_t(:,i)] = calculatePsai_6PM([eqP1(2,i), eqP1(3,i)], [eqP2(2,i), eqP2(3,i)],  inputs.MagPos)';
+        if inputs.usePrepaidPsai
+            Psai_t(:,i) = inputs.Psai(:,i);
+        else
+            [rankM, error, hasAns, isStable, Psai_t(:,i)] = inputs.calcPsaiFromEqFunc([eqP1(2,i), eqP1(3,i)], [eqP2(2,i), eqP2(3,i)],  inputs.MagPos);
+        end
+        
         %
-%         [x_eqPoints(:,i),y_eqPoints(:,i)] = findEqPoints_Minimization(inputs.x_space,inputs.y_space,inputs.Psai_0);
-        try 
-            [x_eqPoints(:,i),y_eqPoints(:,i)] = findEqPoints_Minimization(inputs.x_space,inputs.y_space,Psai_t(:,i));
-        catch
-            [x_eq_,y_eq_] = findEqPoints_Minimization(inputs.x_space,inputs.y_space,Psai_t(:,i));
-            a = length(x_eqPoints(:,1)) - length(x_eq_);
-            x_eqPoints(:,i) = [x_eq_ zeros(1,a)]';
-            y_eqPoints(:,i) = [y_eq_ zeros(1,a)]';
+        if inputs.findEqFromMinimization
+%             [x_eqPoints(:,i),y_eqPoints(:,i)] = findEqPoints_Minimization(inputs.x_space,inputs.y_space,inputs.Psai_0);
+            try 
+                [x_eqPoints(:,i),y_eqPoints(:,i)] = findEqPoints_Minimization(inputs.x_space,inputs.y_space,Psai_t(:,i));
+            catch
+%                 [x_eq_,y_eq_] = findEqPoints_Minimization(inputs.x_space,inputs.y_space,Psai_t(:,i));
+%                 a = length(x_eqPoints(:,1)) - length(x_eq_);
+%                 x_eqPoints(:,i) = [x_eq_ zeros(1,a)]';
+%                 y_eqPoints(:,i) = [y_eq_ zeros(1,a)]';
+                x_eqPoints(:,i) = x_eqPoints(:,1);
+                y_eqPoints(:,i) = y_eqPoints(:,1);
+            end
+        else
+            x_eqPoints(:,i) = [eqP1(2,i); eqP2(2,i)];
+            y_eqPoints(:,i) = [eqP1(3,i); eqP2(3,i)];
         end
         eqPoints{i}.time = time(i);
         eqPoints{i}.x = x_eqPoints(:,i);
