@@ -23,26 +23,17 @@ args.pm.D = args.pm.D * 1e0; %%%%%%%%% note
 
 %% Define PMs locations
 % values --> [x y z m_norm mu_0 m_agents]  for PMs
-a = [0.25 0.25 0.25];
+magNum = 10;
+a = 0.25;
 z = 0.0;
-phi = [30 150 270 -30 90 210]*pi/180;
-values = [
-    a(1)*cos(phi(1)) a(1)*sin(phi(1)) z args.pm.m args.mu_0 args.mr.m
-    a(2)*cos(phi(2)) a(2)*sin(phi(2)) z args.pm.m args.mu_0 args.mr.m
-    a(3)*cos(phi(3)) a(3)*sin(phi(3)) z args.pm.m args.mu_0 args.mr.m
-    a(1)*cos(phi(4)) a(1)*sin(phi(4)) z args.pm.m args.mu_0 args.mr.m
-    a(2)*cos(phi(5)) a(2)*sin(phi(5)) z args.pm.m args.mu_0 args.mr.m
-    a(3)*cos(phi(6)) a(3)*sin(phi(6)) z args.pm.m args.mu_0 args.mr.m
-%     a(1)*cos(phi(5)) a(1)*sin(phi(5)) z args.pm.m args.mu_0 args.mr.m
-%     a(2)*cos(phi(6)) a(2)*sin(phi(6)) z args.pm.m args.mu_0 args.mr.m
-];
-%
-%
+for i=1:magNum
+    phi(i) = (0 + (i-1)*(360/magNum) )*(pi/180);
+    values(i,:) = [a*cos(phi(i)) a*sin(phi(i)) z args.pm.m args.mu_0 args.mr.m];
+end
 % % calcPsaiFromEqFunc = @check_6PM; %check_6PM %check_6PM %check_6PM3 %calculatePsai_6PM
 calcPsaiFromEqFunc = @calculatePsai_minimization;
 symbolicFunctionHandle = @symbolic_fun_b;
 findEqFromMinimization = 0;
-
 
 
 %% Define space and plot parameters and options

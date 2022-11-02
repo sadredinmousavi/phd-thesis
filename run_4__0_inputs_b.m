@@ -6,7 +6,7 @@ clc, close all, clearvars
 addpath(genpath('functions'))
 
 
-inputFile003
+inputFile004
 
 
 
@@ -86,8 +86,8 @@ choice = questdlg(dlgQuestion,dlgTitle,'Yes','No', 'Yes');
 if strcmp(choice, 'Yes') == 1
     % eqPoint1 = [ [0;+0.05;+0.00] [300;+0.03;+0.04] [600;+0.03;+0.09] ];
     % eqPoint2 = [ [0;-0.11;-0.02] [300;-0.10;-0.09] [600;+0.07;-0.10] ];
-    eq_point1 = [-0.00001 +0.00];
-    eq_point2 = [+0.00 -0.000001];
+    eq_point1 = [-0.05 +0.02];
+    eq_point2 = [+0.05 -0.02];
     vars.plotOptions.static.plotEqPoints = 1;
     vars.plotOptions.static.eq_point1 = eq_point1;
     vars.plotOptions.static.eq_point2 = eq_point2;
