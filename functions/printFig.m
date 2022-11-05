@@ -26,13 +26,14 @@ function [] = printFig(vars, Psai, hasFigure, saveFigName)
     end
     
     subplot(3,2,[1 3]) %%
-    plot_field = streamslice(vars.x_space,vars.y_space,Brho,Baxial,'method','cubic');
-    set(plot_field,'Color','black','LineWidth',1.2);
-    hold on 
-    plot(vars.MagPos(:,1), vars.MagPos(:,2), 'r.', 'MarkerSize', 15)
-    for i = 1:size(vars.MagPos,1)
-        drawCylindricalMagnet(L,D,vars.MagPos(i,:),'texture','axial')
-    end
+    hold on
+    plot_field = surface(vars.x_space,vars.y_space,sqrt(Brho.^2+Baxial.^2));
+%     plot_field = streamslice(vars.x_space,vars.y_space,Brho,Baxial,'method','cubic');
+%     set(plot_field,'Color','black','LineWidth',1.2);
+%     plot(vars.MagPos(:,1), vars.MagPos(:,2), 'r.', 'MarkerSize', 15)
+%     for i = 1:size(vars.MagPos,1)
+%         drawCylindricalMagnet(L,D,vars.MagPos(i,:),'texture','axial')
+%     end
     title('\textbf{Magnetic Field}','interpreter','latex', 'fontsize',14)
     xlabel('x [m]','interpreter','latex')
     ylabel('y [m]','interpreter','latex')

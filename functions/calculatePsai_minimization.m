@@ -12,15 +12,15 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
     b = [];
     Aeq = [];
     beq = [];
-    lb  = ones(size(MagPos,1),1)* 000 *pi/180 ;
-    ub  = ones(size(MagPos,1),1)* 180 *pi/180 ;
+    lb  = -ones(size(MagPos,1),1)* 090 *pi/180 ;
+    ub  = +ones(size(MagPos,1),1)* 090 *pi/180 ;
 %     Psai_0 = ones(size(MagPos,1),1)* 180 *pi/180 ;
     Psai_0 = lb;
     %
     options = optimoptions('fmincon');
     options = optimoptions(options,'Display', 'off');
     [Psai1,fval,exitflag,output,lambda,grad,hessian] = fmincon(costFun,Psai_0,A,b,Aeq,beq,lb,ub,@(Psai) stabilityConstraints(Psai, point1, point2, MagPos), options);
-    [Psai2,fval,exitflag,output,lambda,grad,hessian] = fmincon(costFun,Psai_0,A,b,Aeq,beq,lb,ub);
+%     [Psai2,fval,exitflag,output,lambda,grad,hessian] = fmincon(costFun,Psai_0,A,b,Aeq,beq,lb,ub);
 
     Psai = Psai1;
     
