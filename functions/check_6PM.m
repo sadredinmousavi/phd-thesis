@@ -1,7 +1,7 @@
-function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = check_6PM(point1, point2, MagPos)
+function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = check_6PM(points, MagPos)
     
-    [r1, a1, b1, c1] = calculateParamsFromPoint(point1, MagPos);
-    [r2, a2, b2, c2] = calculateParamsFromPoint(point2, MagPos);
+    [r1, a1, b1, c1] = calculateParamsFromPoint(points{1}, MagPos);
+    [r2, a2, b2, c2] = calculateParamsFromPoint(points{2}, MagPos);
     %
     %
     coeff = [r1'; r2'];

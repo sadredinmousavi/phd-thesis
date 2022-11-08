@@ -6,7 +6,7 @@ clc, close all, clearvars
 addpath(genpath('functions'))
 
 
-inputFile004
+inputFile006
 
 
 
@@ -86,14 +86,14 @@ choice = questdlg(dlgQuestion,dlgTitle,'Yes','No', 'Yes');
 if strcmp(choice, 'Yes') == 1
     % eqPoint1 = [ [0;+0.05;+0.00] [300;+0.03;+0.04] [600;+0.03;+0.09] ];
     % eqPoint2 = [ [0;-0.11;-0.02] [300;-0.10;-0.09] [600;+0.07;-0.10] ];
-    eq_point1 = [-0.05 +0.02];
-    eq_point2 = [+0.05 -0.02];
+    eq_points{1} = [-0.05 +0.03];
+    eq_points{2} = [+0.05 -0.03];
+%     eq_points{3} = [+0.00 -0.08];
     vars.plotOptions.static.plotEqPoints = 1;
-    vars.plotOptions.static.eq_point1 = eq_point1;
-    vars.plotOptions.static.eq_point2 = eq_point2;
+    vars.plotOptions.static.eq_points = eq_points;
     
 
-    [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_point1, eq_point2, MagPos);
+    [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_points, MagPos);
     
 %     PsaiSerie = otherOutputs.PsaiSerie;
 %     for cnt=1:length(PsaiSerie)
@@ -102,24 +102,27 @@ if strcmp(choice, 'Yes') == 1
 %     end
     
     %
-    [Fx1, Fy1, Fz1] = CylFfield3(Psai,eq_point1);
-    [Bx1, By1, Bz1] = CylBfield3(Psai,eq_point1);
+    [Fx1, Fy1, Fz1] = CylFfield3(Psai,eq_points{1});
+    [Bx1, By1, Bz1] = CylBfield3(Psai,eq_points{1});
     %
-    [Fx2, Fy2, Fz2] = CylFfield3(Psai,eq_point2);
-    [Bx2, By2, Bz2] = CylBfield3(Psai,eq_point2);
+    [Fx2, Fy2, Fz2] = CylFfield3(Psai,eq_points{2});
+    [Bx2, By2, Bz2] = CylBfield3(Psai,eq_points{2});
+    %
+%     [Fx3, Fy3, Fz3] = CylFfield3(Psai,eq_points{3});
+%     [Bx3, By3, Bz3] = CylBfield3(Psai,eq_points{3});
     %
     printFig(vars, Psai, 0);
     %
-    [V,D] = eig(hessian.point1); % V(:,i)
-    angle1_point1 = atan(V(2,1)/V(1,1))*(180/pi);
-    angle2_point1 = atan(V(2,2)/V(1,2))*(180/pi);
-    d1_point1 = D(1,1);
-    d2_point1 = D(2,2);
-    [V,D] = eig(hessian.point2); % V(:,i)
-    angle1_point2 = atan(V(2,1)/V(1,1))*(180/pi);
-    angle2_point2 = atan(V(2,2)/V(1,2))*(180/pi);
-    d1_point2 = D(1,1);
-    d2_point2 = D(2,2);
+%     [V,D] = eig(hessian.point1); % V(:,i)
+%     angle1_point1 = atan(V(2,1)/V(1,1))*(180/pi);
+%     angle2_point1 = atan(V(2,2)/V(1,2))*(180/pi);
+%     d1_point1 = D(1,1);
+%     d2_point1 = D(2,2);
+%     [V,D] = eig(hessian.point2); % V(:,i)
+%     angle1_point2 = atan(V(2,1)/V(1,1))*(180/pi);
+%     angle2_point2 = atan(V(2,2)/V(1,2))*(180/pi);
+%     d1_point2 = D(1,1);
+%     d2_point2 = D(2,2);
 
 
 
@@ -130,7 +133,9 @@ if strcmp(choice, 'Yes') == 1
     plot(eq_point1(1), eq_point1(2), '+r')
     for x=-domain:newStep:domain
         for y=-domain:newStep:domain
-            [rankM, error, hasAns, isStable, Psai, hessian] = vars.calcPsaiFromEqFunc(eq_point1, [x y], MagPos);
+            eq_points{1} = eq_point1;
+            eq_points{2} = [x y];
+            [rankM, error, hasAns, isStable, Psai, hessian] = vars.calcPsaiFromEqFunc(eq_points, MagPos);
     %         if hasAns
             if isStable && hasAns
                 plot(x, y, 'co')
@@ -147,11 +152,11 @@ end
 
 
 %% calculate Psai_0 in order to have equilibrium in 3 points (using 6 magnets)
-% eq_point1 = [-0.02 +0.04];%eq_point1 = [-0.01 +0.05];
-% eq_point2 = [+0.04 -0.11];%eq_point2 = [+0.04 -0.13];
-% eq_point3 = [+0.04 -0.11];%eq_point3 = [+0.06 -0.11];
+% eq_points{1} = [-0.02 +0.04];%eq_point1 = [-0.01 +0.05];
+% eq_points{2} = [+0.04 -0.11];%eq_point2 = [+0.04 -0.13];
+% eq_points{3} = [+0.04 -0.11];%eq_point3 = [+0.06 -0.11];
 % 
-% [rankM, error, hasAns, isStable, Psai] = check_6PM3(eq_point1, eq_point2, eq_point3, MagPos);
+% [rankM, error, hasAns, isStable, Psai] = check_6PM3(eq_points, MagPos);
 % printFig(vars, Psai, 0);
 % newStep = 0.01;
 % 
@@ -199,9 +204,9 @@ end
 % path inputs --> [point1 point2 startTime endTime dt]
 % % eqPoint = [t1 t2 t3 ...; x1 x2 x3 ...; y1 y2 y3 ...]
 vars.tspan = tspan;
-vars.eqPointsNum = eqPointsNum;
-vars.eqPoint1 = eqPoint1;
-vars.eqPoint2 = eqPoint2;
+vars.eqPoints{1} = eqPoint1;
+vars.eqPoints{2} = eqPoint2;
+vars.eqPoints{3} = eqPoint3;
 
 vars.usePrepaidPsai = usePrepaidPsai;
 if usePrepaidPsai

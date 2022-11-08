@@ -17,18 +17,18 @@ waitIters = size(ans1,1);
 waitHandle = waitbar(0,waitText);
 for i=1:size(ans1,1)
     waitbar(i/waitIters,waitHandle, waitText);
-    [Psai,eqPoint1,eqPoint2,targetInd,real_eqPoint_x_seq,real_eqPoint_y_seq] = psaiController(t(i));
+    [Psai,eqPoints_sequence,targetInd,real_eqPoint_x_seq,real_eqPoint_y_seq] = psaiController(t(i));
 %     Psai = psaiController(t(i));
     if plotOptions.fieldVectors
         [~, Frho, Faxial] = calculateForceField(vars.x_space,vars.y_space,Psai);
         plotData(i).Frho = Frho;
         plotData(i).Faxial = Faxial;
     end
-    plotData(i).eqPoint1 = eqPoint1;
-    plotData(i).eqPoint2 = eqPoint2;
+%     plotData(i).eqPoints;
     plotData(i).targetInd = targetInd;
     plotDataStatic.real_eqPoint_x_seq(:,i) = real_eqPoint_x_seq;
     plotDataStatic.real_eqPoint_y_seq(:,i) = real_eqPoint_y_seq;
+    plotDataStatic.eqPoints_sequence = eqPoints_sequence;
     plotData(i).Psai = Psai;
 end
 close(waitHandle)
@@ -93,8 +93,8 @@ for i=1:size(ans1,1)
         end
         if plotOptions.printLambdaValues
             cnt = length(text);
-%             for k=(length(text)+1):(vars.eqPointsNum+length(text)+1)
-                eqPoint = plotData(i).eqPoint1;
+            for k=1:size(plotDataStatic.real_eqPoint_x_seq,1)
+                eqPoint = [plotDataStatic.real_eqPoint_x_seq(k) plotDataStatic.real_eqPoint_y_seq(k)];
                 [r1, a1, b1, c1] = calculateParamsFromPoint(eqPoint, vars.MagPos);
                 [isStable1,hessian.point1] = isHessianStable(Psai, a1, b1, c1);
                 [V,D] = eig(hessian.point1); % V(:,i)
@@ -102,24 +102,10 @@ for i=1:size(ans1,1)
                 angle2 = atan(V(2,2)/V(1,2))*(180/pi);
                 d1 = sqrt(abs(D(1,1)));
                 d2 = sqrt(abs(D(2,2)));
-                k=1;
                 text{cnt+1} = sprintf('point%d:[{\\theta}_1=%.0f^{\\circ}, {\\theta}_2=%.0f^{\\circ}]\n', k, angle1, angle2);
                 text{cnt+2} = sprintf('point%d:[{\\lambda}_1=%.0f, {\\lambda}_2=%.0f]\n', k, d1, d2);
                 cnt = cnt + 2;
-                %
-                eqPoint = plotData(i).eqPoint2;
-                [r1, a1, b1, c1] = calculateParamsFromPoint(eqPoint, vars.MagPos);
-                [isStable1,hessian.point1] = isHessianStable(Psai, a1, b1, c1);
-                [V,D] = eig(hessian.point1); % V(:,i)
-                angle1 = atan(V(2,1)/V(1,1))*(180/pi);
-                angle2 = atan(V(2,2)/V(1,2))*(180/pi);
-                d1 = sqrt(abs(D(1,1)));
-                d2 = sqrt(abs(D(2,2)));
-                k=2;
-                text{cnt+1} = sprintf('point%d:[{\\theta}_1=%.0f^{\\circ}, {\\theta}_2=%.0f^{\\circ}]\n', k, angle1, angle2);
-                text{cnt+2} = sprintf('point%d:[{\\lambda}_1=%.0f, {\\lambda}_2=%.0f]\n', k, d1, d2);
-                cnt = cnt + 2;
-%             end
+            end
         end
         annotation( 'textbox', 'String', sprintf('%s', text{:}), 'Color', 'k', ...
             'FontSize', 14, 'Units', 'normalized', 'EdgeColor', 'none', ...

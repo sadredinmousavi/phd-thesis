@@ -51,8 +51,9 @@ function [] = printFig(vars, Psai, hasFigure, saveFigName)
     end
     %
     if options.plotEqPoints
-        plot(options.eq_point1(1), options.eq_point1(2), 'rx', 'MarkerSize', 15,'LineWidth',2);
-        plot(options.eq_point2(1), options.eq_point2(2), 'rx', 'MarkerSize', 15,'LineWidth',2);
+        for j=1:length(options.eq_points)
+            plot(options.eq_points{j}(1), options.eq_points{j}(2), 'rx', 'MarkerSize', 15,'LineWidth',2);
+        end
     end
     %
     title('\textbf{Force Field}','interpreter','latex', 'fontsize',14)

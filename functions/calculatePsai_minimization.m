@@ -1,7 +1,7 @@
-function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculatePsai_minimization(point1, point2, MagPos)
+function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculatePsai_minimization(points, MagPos)
     
-    [r1, a1, b1, c1] = calculateParamsFromPoint(point1, MagPos);
-    [r2, a2, b2, c2] = calculateParamsFromPoint(point2, MagPos);
+    [r1, a1, b1, c1] = calculateParamsFromPoint(points{1}, MagPos);
+    [r2, a2, b2, c2] = calculateParamsFromPoint(points{2}, MagPos);
     %
     coeff = [r1'; r2'];
     forceEqs = @(psai) coeff*cos(psai);
@@ -19,14 +19,14 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
     %
     options = optimoptions('fmincon');
     options = optimoptions(options,'Display', 'off');
-    [Psai1,fval,exitflag,output,lambda,grad,hessian] = fmincon(costFun,Psai_0,A,b,Aeq,beq,lb,ub,@(Psai) stabilityConstraints(Psai, point1, point2, MagPos), options);
+    [Psai1,fval,exitflag,output,lambda,grad,hessian] = fmincon(costFun,Psai_0,A,b,Aeq,beq,lb,ub,@(Psai) stabilityConstraints(Psai, points, MagPos), options);
 %     [Psai2,fval,exitflag,output,lambda,grad,hessian] = fmincon(costFun,Psai_0,A,b,Aeq,beq,lb,ub);
 
     Psai = Psai1;
     
     error = costFun(Psai);
     error2 = forceEqs(Psai);
-    c_ = stabilityConstraints(Psai, point1, point2, MagPos);
+    c_ = stabilityConstraints(Psai, points, MagPos);
 
     rankM=4;
     hasAns=0;
@@ -39,10 +39,10 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
     end
     otherOutputs = 0;
     
-    function [c,ceq] = stabilityConstraints(Psai, point1, point2, MagPos)
-        [r_1, a_1, b_1, c_1] = calculateParamsFromPoint(point1, MagPos);
+    function [c,ceq] = stabilityConstraints(Psai, points, MagPos)
+        [r_1, a_1, b_1, c_1] = calculateParamsFromPoint(points{1}, MagPos);
         hessian1 = [cos(Psai)'*a_1 cos(Psai)'*b_1;cos(Psai)'*b_1 cos(Psai)'*c_1];
-        [r_2, a_2, b_2, c_2] = calculateParamsFromPoint(point2, MagPos);
+        [r_2, a_2, b_2, c_2] = calculateParamsFromPoint(points{2}, MagPos);
         hessian2 = [cos(Psai)'*a_2 cos(Psai)'*b_2;cos(Psai)'*b_2 cos(Psai)'*c_2];
         %
         [V,D] = eig(hessian1); % V(:,i)

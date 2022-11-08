@@ -1,8 +1,8 @@
-function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = check_6PM3(point1, point2, point3, MagPos)
+function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = check_6PM3(points, MagPos)
     
-    [r1, a1, b1, c1] = calculateParamsFromPoint(point1, MagPos);
-    [r2, a2, b2, c2] = calculateParamsFromPoint(point2, MagPos);
-    [r3, a3, b3, c3] = calculateParamsFromPoint(point3, MagPos);
+    [r1, a1, b1, c1] = calculateParamsFromPoint(points{1}, MagPos);
+    [r2, a2, b2, c2] = calculateParamsFromPoint(points{2}, MagPos);
+    [r3, a3, b3, c3] = calculateParamsFromPoint(points{3}, MagPos);
     %
     %
     coeff = [r1'; r2'; r3'];
