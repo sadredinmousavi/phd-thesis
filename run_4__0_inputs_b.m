@@ -4,6 +4,7 @@
 
 clc, close all, clearvars
 addpath(genpath('functions'))
+addpath(genpath('inputFiles'))
 
 
 inputFile001_6
