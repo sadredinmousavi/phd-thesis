@@ -6,7 +6,7 @@ clc, close all, clearvars
 addpath(genpath('functions'))
 
 
-inputFile006
+inputFile001_6
 
 
 
@@ -78,6 +78,9 @@ vars.plotOptions.dynamic = plotOptionsDyn;
 vars.x_mr_0 = x_mr_0;
 vars.y_mr_0 = y_mr_0;
 
+%% Define OJs locations
+vars.x_oj_0 = +0.00;
+vars.y_oj_0 = +0.08;
 
 %% calculate Psai_0 in order to have equilibrium in 2 points (using 4 or 6 magnets)
 dlgTitle    = 'Hand Calculations';
@@ -86,15 +89,17 @@ choice = questdlg(dlgQuestion,dlgTitle,'Yes','No', 'Yes');
 if strcmp(choice, 'Yes') == 1
     % eqPoint1 = [ [0;+0.05;+0.00] [300;+0.03;+0.04] [600;+0.03;+0.09] ];
     % eqPoint2 = [ [0;-0.11;-0.02] [300;-0.10;-0.09] [600;+0.07;-0.10] ];
-    eq_points{1} = [-0.05 +0.03];
-    eq_points{2} = [+0.05 -0.03];
+    eq_points{1} = [+0.05 +0.03];
+    eq_points{2} = [+0.05 +0.03];
 %     eq_points{3} = [+0.00 -0.08];
     vars.plotOptions.static.plotEqPoints = 1;
+    vars.plotOptions.static.printLambdaValues = 1;
+    vars.plotOptions.static.printPsaiValues = 1;
     vars.plotOptions.static.eq_points = eq_points;
     
 
     [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_points, MagPos);
-    
+    printFig2(vars, Psai, 0);
 %     PsaiSerie = otherOutputs.PsaiSerie;
 %     for cnt=1:length(PsaiSerie)
 %         Psai = PsaiSerie(:,cnt);
@@ -204,10 +209,7 @@ end
 % path inputs --> [point1 point2 startTime endTime dt]
 % % eqPoint = [t1 t2 t3 ...; x1 x2 x3 ...; y1 y2 y3 ...]
 vars.tspan = tspan;
-vars.eqPoints{1} = eqPoint1;
-vars.eqPoints{2} = eqPoint2;
-vars.eqPoints{3} = eqPoint3;
-
+vars.eqPoints = eqPoints;
 vars.usePrepaidPsai = usePrepaidPsai;
 if usePrepaidPsai
     vars.Psai = Psai;

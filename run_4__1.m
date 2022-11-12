@@ -8,7 +8,9 @@ plotOptions = vars.plotOptions.dynamic;
 
 options=odeset('OutputFcn',@odeprog,'Events',@odeabort);
 ans0 = [vars.x_mr_0 vars.y_mr_0 zeros(1,length(vars.x_mr_0)) zeros(1,length(vars.x_mr_0))];
-[t,ans1] = ode45(@systemDynamics, vars.tspan, ans0, options);
+mr_num = length(vars.x_mr_0);
+oj_num = length(vars.x_oj_0);
+[t,ans1] = ode45(@(t,y)systemDynamics(t,y,mr_num,oj_num), vars.tspan, ans0, options);
 Npoints = length(vars.x_space);
 %
 %
@@ -94,7 +96,7 @@ for i=1:size(ans1,1)
         if plotOptions.printLambdaValues
             cnt = length(text);
             for k=1:size(plotDataStatic.real_eqPoint_x_seq,1)
-                eqPoint = [plotDataStatic.real_eqPoint_x_seq(k) plotDataStatic.real_eqPoint_y_seq(k)];
+                eqPoint = [plotDataStatic.real_eqPoint_x_seq(k,i) plotDataStatic.real_eqPoint_y_seq(k,i)];
                 [r1, a1, b1, c1] = calculateParamsFromPoint(eqPoint, vars.MagPos);
                 [isStable1,hessian.point1] = isHessianStable(Psai, a1, b1, c1);
                 [V,D] = eig(hessian.point1); % V(:,i)

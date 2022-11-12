@@ -15,10 +15,10 @@ function [] = designPsaiController(inputs)
             temp = inputs.eqPoints{cnt}(1,:) - time(i);
             for k = 1:length(temp)
                 if temp(k) > 0
-                    eqP{cnt}(:,i) = inputs.eqPoints{cnt}(:,k-1);
+                    eqP{cnt}(2:3,i) = inputs.eqPoints{cnt}(2:3,k-1);
                     break;
                 elseif k == length(temp)
-                    eqP{cnt}(:,i) = inputs.eqPoints{cnt}(:,end);
+                    eqP{cnt}(2:3,i) = inputs.eqPoints{cnt}(2:3,end);
                 end
             end
             eqP{cnt}(1,i) = time(i);
@@ -28,7 +28,10 @@ function [] = designPsaiController(inputs)
         if inputs.usePrepaidPsai
             Psai_t(:,i) = inputs.Psai(:,i);
         else
-            [rankM, error, hasAns, isStable, Psai_t(:,i)] = inputs.calcPsaiFromEqFunc(eqP,  inputs.MagPos);
+            for j=1:length(eqP)
+                eqP_tmp{j}(:,1) = eqP{j}(2:3,i);
+            end
+            [rankM, error, hasAns, isStable, Psai_t(:,i)] = inputs.calcPsaiFromEqFunc(eqP_tmp,  inputs.MagPos);
         end
         
         %

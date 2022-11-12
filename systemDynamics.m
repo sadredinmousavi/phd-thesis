@@ -1,5 +1,6 @@
-function dydt = systemDynamics(t,y)
-n = size(y,1)/4;
+function dydt = systemDynamics(t,y, mr_num, oj_num)
+n = mr_num; % n = size(y,1)/4;
+m = oj_num;
 x_ = y(1:n,1);
 y_ = y(n+1:2*n,1);
 xd_ = y(2*n+1:3*n,1);

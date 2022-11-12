@@ -62,16 +62,16 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
             d1(2,1) = D(2,2);
             c(2*k-1:2*k, 1) = d1;
         end
-        k=k+1;
-        [r_1, a_1, b_1, c_1] = calculateParamsFromPoint([0,0], MagPos);
-        hessian1 = [cos(Psai)'*a_1 cos(Psai)'*b_1;cos(Psai)'*b_1 cos(Psai)'*c_1];
-        %
-        [V,D] = eig(hessian1); % V(:,i)
-        angle1(1,1) = atan(V(2,1)/V(1,1))*(180/pi);
-        angle1(2,1) = atan(V(2,2)/V(1,2))*(180/pi);
-        d1(1,1) = -D(1,1);
-        d1(2,1) = -D(2,2);
-        c(2*k-1:2*k, 1) = d1;
+%         k=k+1;
+%         [r_1, a_1, b_1, c_1] = calculateParamsFromPoint([0,0], MagPos);
+%         hessian1 = [cos(Psai)'*a_1 cos(Psai)'*b_1;cos(Psai)'*b_1 cos(Psai)'*c_1];
+%         %
+%         [V,D] = eig(hessian1); % V(:,i)
+%         angle1(1,1) = atan(V(2,1)/V(1,1))*(180/pi);
+%         angle1(2,1) = atan(V(2,2)/V(1,2))*(180/pi);
+%         d1(1,1) = -D(1,1);
+%         d1(2,1) = -D(2,2);
+%         c(2*k-1:2*k, 1) = d1;
     end
     
 end
