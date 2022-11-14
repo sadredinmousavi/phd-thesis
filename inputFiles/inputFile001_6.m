@@ -31,7 +31,7 @@ for i=1:magNum
     values(i,:) = [a*cos(phi(i)) a*sin(phi(i)) z args.pm.m args.mu_0 args.mr.m];
 end
 % % calcPsaiFromEqFunc = @check_6PM; %check_6PM %check_6PM %check_6PM3 %calculatePsai_6PM
-calcPsaiFromEqFunc = @calculatePsai_minimization_3p;
+calcPsaiFromEqFunc = @calculatePsai_minimization;
 symbolicFunctionHandle = @symbolic_fun_b;
 findEqFromMinimization = 0;
 
@@ -51,6 +51,7 @@ plotOptionsDyn.fieldVectors = 0;
 plotOptionsDyn.magnets = 1;
 plotOptionsDyn.areaBorders = 1;
 plotOptionsDyn.robotsTrack = 0;
+plotOptionsDyn.objectsTrack = 0;
 plotOptionsDyn.eqPoints = 1;
 plotOptionsDyn.eqPointsTrack = 1;
 plotOptionsDyn.printPsaiValues = 1;
@@ -59,7 +60,7 @@ plotOptionsDyn.printLambdaValues = 1;
 
 
 %% Define MRs locations
-
+r_mr = 0.001;
 center1 = [-0.05, 0.02];
 num1 = 3; %4
 offset1 = 0.02;
@@ -76,11 +77,16 @@ y_serie2 = linspace(center2(2)-offset2, center2(2)+offset2, num2);
 [x_mr__,y_mr__] = meshgrid(x_serie2,y_serie2);
 x_mr_2 = reshape(x_mr__, 1, []);
 y_mr_2 = reshape(y_mr__, 1, []);
+
 x_mr_0 = [x_mr_1 x_mr_2];
 y_mr_0 = [y_mr_1 y_mr_2];
+r_mr_0 = r_mr * ones(1, length(x_mr_0));
 
+%% Define Free Objects locations
 
-
+x_fp_0 = +0.00;
+y_fp_0 = +0.08;
+r_fp_0 = 0.002;
 
 
 %% Define path and eqPoints desired locations during simulation time
@@ -88,8 +94,11 @@ y_mr_0 = [y_mr_1 y_mr_2];
 % path inputs --> [point1 point2 startTime endTime dt]
 % % eqPoint = [t1 t2 t3 ...; x1 x2 x3 ...; y1 y2 y3 ...]
 
-eqPoint1 = [ [0;-0.05;+0.00] [100;-0.05;+0.02] [200;-0.05;+0.04] [250;-0.03;+0.06] [300;-0.01;+0.09] [400;+0.00;+0.10] ];
-eqPoint2 = [ [0;+0.05;+0.00] [100;+0.05;+0.02] [200;+0.05;+0.04] [250;+0.03;+0.06] [300;+0.01;+0.09] [400;+0.00;+0.10] ];
+eqPoint1 = [ [0;-0.05;+0.00] [100;-0.05;+0.02] [200;-0.05;+0.04] [250;-0.03;+0.07] [300;-0.01;+0.09] [400;+0.00;+0.10] [500;+0.00;+0.05] [600;+0.00;+0.00] ];
+eqPoint2 = [ [0;+0.05;+0.00] [100;+0.05;+0.02] [200;+0.05;+0.04] [250;+0.03;+0.07] [300;+0.01;+0.09] [400;+0.00;+0.10] [500;+0.00;+0.05] [600;+0.00;+0.00] ];
+
+eqPoint1 = [ [0;-0.05;+0.00] [100;-0.05;+0.02] [200;-0.05;+0.04] [250;-0.03;+0.07] [300;-0.01;+0.09] [400;+0.00;+0.10] [500;+0.00;+0.08] [600;+0.00;+0.06] [700;+0.00;+0.04] [800;+0.00;+0.02] [900;+0.00;+0.00] ];
+eqPoint2 = [ [0;+0.05;+0.00] [100;+0.05;+0.02] [200;+0.05;+0.04] [250;+0.03;+0.07] [300;+0.01;+0.09] [400;+0.00;+0.10] [500;+0.00;+0.08] [600;+0.00;+0.06] [700;+0.00;+0.04] [800;+0.00;+0.02] [900;+0.00;+0.00] ];
 
 
 eqPoints{1} = eqPoint1;
