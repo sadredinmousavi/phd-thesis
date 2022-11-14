@@ -1,6 +1,6 @@
-function dydt = systemDynamics(t,y, mr_num, fp_num)
-n = mr_num; % n = size(y,1)/4;
-m = fp_num;
+function dydt = systemDynamics(t,y, inputs)
+n = inputs.mr_num; % n = size(y,1)/4;
+m = inputs.fp_num;
 %
 x_mr = y(1:n,1);
 y_mr = y(n+1:2*n,1);
@@ -29,7 +29,7 @@ L = 0.0004;
 D = 0.0002;
 m_ = M * (pi*D^2/4*L);
 %
-sigma = 1 * 1e-5;
+sigma = 1 * 1e-6;
 epsilun = 1000;
 LJ_potential = @(r)4*epsilun*( (sigma/r)^12 - (sigma/r)^6 );
 LJ_force     = @(r)4*epsilun*( -12*(sigma/r)^12/r + 6*(sigma/r)^6/r );

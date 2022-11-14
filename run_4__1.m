@@ -10,9 +10,12 @@ options=odeset('OutputFcn',@odeprog,'Events',@odeabort);
 ans0_mr = [vars.x_mr_0 vars.y_mr_0 zeros(1,length(vars.x_mr_0)) zeros(1,length(vars.y_mr_0))];
 ans0_oj = [vars.x_fp_0 vars.y_fp_0 zeros(1,length(vars.x_fp_0)) zeros(1,length(vars.y_fp_0))];
 ans0    = [ans0_mr ans0_oj];
-mr_num = length(vars.x_mr_0);
-fp_num = length(vars.x_fp_0);
-[t,ans1] = ode45(@(t,y)systemDynamics(t,y,mr_num,fp_num), vars.tspan, ans0, options);
+%
+inputs = vars.dynamicSolverInputs;
+inputs.mr_num = length(vars.x_mr_0);
+inputs.fp_num = length(vars.x_fp_0);
+%
+[t,ans1] = ode45(@(t,y)systemDynamics(t,y,inputs), vars.tspan, ans0, options);
 Npoints = length(vars.x_space);
 %
 %
@@ -48,8 +51,8 @@ cd('data')
 
 
 
-n = mr_num;
-m = fp_num;
+n = inputs.mr_num;
+m = inputs.fp_num;
 for i=1:size(ans1,1)
     delete(findall(gcf,'type','annotation'))
     plot(ans1(i,1:n),ans1(i,n+1:2*n),'bo', 'MarkerSize',3 , 'LineWidth',3 );%plot(ans1(i,1:n),ans1(i,n+1:2*n),'bo', 'MarkerSize',8 , 'LineWidth',3 );
@@ -60,10 +63,12 @@ for i=1:size(ans1,1)
         end
     end
     %
-    plot(ans1(i,4*n+1:4*n+m),ans1(i,4*n+m+1:4*n+2*m),'ro', 'MarkerSize',3 , 'LineWidth',3 );%plot(ans1(i,1:n),ans1(i,n+1:2*n),'bo', 'MarkerSize',8 , 'LineWidth',3 );
-    if plotOptions.objectsTrack
-        for j=1:n
-            plot(ans1(1:i,4*n+1:4*n+m),ans1(1:i,4*n+m+1:4*n+2*m),'r-', 'LineWidth',1 );% plot(ans1(1:i,j),ans1(1:i,n+j),'r-', 'LineWidth',3 );
+    if m > 0
+        plot(ans1(i,4*n+1:4*n+m),ans1(i,4*n+m+1:4*n+2*m),'ro', 'MarkerSize',3 , 'LineWidth',3 );%plot(ans1(i,1:n),ans1(i,n+1:2*n),'bo', 'MarkerSize',8 , 'LineWidth',3 );
+        if plotOptions.objectsTrack
+            for j=1:n
+                plot(ans1(1:i,4*n+1:4*n+m),ans1(1:i,4*n+m+1:4*n+2*m),'r-', 'LineWidth',1 );% plot(ans1(1:i,j),ans1(1:i,n+j),'r-', 'LineWidth',3 );
+            end
         end
     end
     %
