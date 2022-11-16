@@ -8,10 +8,11 @@ plotOptions = vars.plotOptions.dynamic;
 
 options=odeset('OutputFcn',@odeprog,'Events',@odeabort);
 ans0_mr = [vars.x_mr_0 vars.y_mr_0 zeros(1,length(vars.x_mr_0)) zeros(1,length(vars.y_mr_0))];
-ans0_oj = [vars.x_fp_0 vars.y_fp_0 zeros(1,length(vars.x_fp_0)) zeros(1,length(vars.y_fp_0))];
-ans0    = [ans0_mr ans0_oj];
+ans0_fp = [vars.x_fp_0 vars.y_fp_0 zeros(1,length(vars.x_fp_0)) zeros(1,length(vars.y_fp_0))];
+ans0    = [ans0_mr ans0_fp];
 %
-inputs = vars.dynamicSolverInputs;
+% inputs = vars.dynamicSolverInputs;
+inputs.walls  = vars.walls;
 inputs.mr_num = length(vars.x_mr_0);
 inputs.fp_num = length(vars.x_fp_0);
 %
@@ -53,6 +54,7 @@ cd('data')
 
 n = inputs.mr_num;
 m = inputs.fp_num;
+w = size(inputs.walls,2);
 for i=1:size(ans1,1)
     delete(findall(gcf,'type','annotation'))
     plot(ans1(i,1:n),ans1(i,n+1:2*n),'bo', 'MarkerSize',3 , 'LineWidth',3 );%plot(ans1(i,1:n),ans1(i,n+1:2*n),'bo', 'MarkerSize',8 , 'LineWidth',3 );
@@ -65,7 +67,7 @@ for i=1:size(ans1,1)
     %
     if m > 0
         plot(ans1(i,4*n+1:4*n+m),ans1(i,4*n+m+1:4*n+2*m),'ro', 'MarkerSize',3 , 'LineWidth',3 );%plot(ans1(i,1:n),ans1(i,n+1:2*n),'bo', 'MarkerSize',8 , 'LineWidth',3 );
-        if plotOptions.objectsTrack
+        if plotOptions.particlesTrack
             for j=1:n
                 plot(ans1(1:i,4*n+1:4*n+m),ans1(1:i,4*n+m+1:4*n+2*m),'r-', 'LineWidth',1 );% plot(ans1(1:i,j),ans1(1:i,n+j),'r-', 'LineWidth',3 );
             end
@@ -86,6 +88,13 @@ for i=1:size(ans1,1)
         plot(vars.MagPos(:,1), vars.MagPos(:,2), 'g.', 'MarkerSize', 15);
     end
     %
+    if plotOptions.channelLines
+        if w > 0
+            for cnt=1:w
+                plot(vars.walls([2 4], cnt), vars.walls([3 5], cnt),'k-');
+            end
+        end
+    end
     %
     if plotOptions.areaBorders
         plot([min(x_space) max(x_space) max(x_space) min(x_space) min(x_space)], [min(y_space) min(y_space) max(y_space) max(y_space) min(y_space)], 'k-')

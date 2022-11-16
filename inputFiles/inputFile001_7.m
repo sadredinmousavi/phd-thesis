@@ -51,7 +51,8 @@ plotOptionsDyn.fieldVectors = 0;
 plotOptionsDyn.magnets = 1;
 plotOptionsDyn.areaBorders = 1;
 plotOptionsDyn.robotsTrack = 0;
-plotOptionsDyn.objectsTrack = 0;
+plotOptionsDyn.particlesTrack = 0;
+plotOptionsDyn.channelLines = 1;
 plotOptionsDyn.eqPoints = 1;
 plotOptionsDyn.eqPointsTrack = 1;
 plotOptionsDyn.printPsaiValues = 1;
@@ -82,7 +83,7 @@ x_mr_0 = [x_mr_1 x_mr_2];
 y_mr_0 = [y_mr_1 y_mr_2];
 r_mr_0 = r_mr * ones(1, length(x_mr_0));
 
-%% Define Free Particles locations
+%% Define Free particles locations
 
 x_fp_0 = +0.00;
 y_fp_0 = +0.08;
@@ -112,6 +113,13 @@ tspan = 0:10:max(eqPoint1(1,end),eqPoint2(1,end))+500;%tspan = 0:1/5:120;%tspan 
 usePrepaidPsai = 0;%%%%% note
 
 
+%% Define Walls
+
+% path inputs --> [point1 point2 startTime endTime dt]
+% % wall = [type1 type2 type3 ...; x1 x2 x3 ...; y1 y2 y3 ...; x1_ x2_ x3_ ...; y1_ y2_ y3_ ...]
+% % wall_linear = [type; x1; y1; x2; y2]  --> type 0
+% % wall_circle = [type; x1; y1; r0; 00]  --> type 1
+walls = [ [0;-0.10;+0.05;-0.05;+0.05] [0;-0.05;+0.05;-0.03;+0.08] [0;-0.03;+0.08;-0.01;+0.09] ];
 
 %%
 function [eqPoint1] = defineLinearPath(eqPoint0, eqPoint1, t0, refreshTime, speed)

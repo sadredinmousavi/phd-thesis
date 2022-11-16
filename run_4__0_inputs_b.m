@@ -7,10 +7,10 @@ addpath(genpath('functions'))
 addpath(genpath('inputFiles'))
 
 
-inputFile001_6
+inputFile001_7
 
 
-
+% [r,isInContact,normalVector] = calculateDistanceToWallLinear([0;0], [-3;0;0;3])
 
 %% Define parameters
 vars = args;
@@ -80,7 +80,7 @@ vars.x_mr_0 = x_mr_0;
 vars.y_mr_0 = y_mr_0;
 vars.r_mr_0 = r_mr_0;
 
-%% Define OJs locations
+%% Define FPs locations
 if exist('x_fp_0', 'var') == 1
     vars.x_fp_0 = x_fp_0;
     vars.y_fp_0 = y_fp_0;
@@ -90,6 +90,14 @@ else
     vars.y_fp_0 = [];
     vars.r_fp_0 = [];
 end
+
+%% Define Walls
+if exist('walls', 'var') == 1
+    vars.walls = walls;
+else
+    vars.walls = [];
+end
+
 
 %% calculate Psai_0 in order to have equilibrium in 2 points (using 4 or 6 magnets)
 dlgTitle    = 'Hand Calculations';
