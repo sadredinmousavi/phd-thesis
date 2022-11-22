@@ -6,15 +6,17 @@
 %%
 plotOptions = vars.plotOptions.dynamic;
 
-options=odeset('OutputFcn',@odeprog,'Events',@odeabort);
+options = odeset('OutputFcn',@odeprog,'Events',@odeabort);
 ans0_mr = [vars.x_mr_0 vars.y_mr_0 zeros(1,length(vars.x_mr_0)) zeros(1,length(vars.y_mr_0))];
-ans0_fp = [vars.x_fp_0 vars.y_fp_0 zeros(1,length(vars.x_fp_0)) zeros(1,length(vars.y_fp_0))];
+ans0_fp = [vars.x_fp_0 vars.y_fp_0 zeros(1,length(vars.x_fp_0)) zeros(1,length(vars.y_fp_0)) vars.t_fp_0 zeros(1,length(vars.t_fp_0))];
 ans0    = [ans0_mr ans0_fp];
 %
 % inputs = vars.dynamicSolverInputs;
 inputs.walls  = vars.walls;
 inputs.mr_num = length(vars.x_mr_0);
 inputs.fp_num = length(vars.x_fp_0);
+inputs.fps = vars.fps;
+inputs.r_mr = vars.r_mr_0;
 %
 [t,ans1] = ode45(@(t,y)systemDynamics(t,y,inputs), vars.tspan, ans0, options);
 Npoints = length(vars.x_space);
@@ -57,27 +59,43 @@ m = inputs.fp_num;
 w = size(inputs.walls,2);
 for i=1:size(ans1,1)
     delete(findall(gcf,'type','annotation'))
-    plot(ans1(i,1:n),ans1(i,n+1:2*n),'bo', 'MarkerSize',3 , 'LineWidth',3 );%plot(ans1(i,1:n),ans1(i,n+1:2*n),'bo', 'MarkerSize',8 , 'LineWidth',3 );
+    clf(gcf)
+    title(sprintf('t = %1.3f s', t(i)),'Color','r', 'FontSize', 30)
     hold on
+    % microrobots
+%     plot(ans1(i,1:n),ans1(i,n+1:2*n),'bo', 'MarkerSize',3 , 'LineWidth',3 );
+    for j=1:n
+        x_mr = ans1(i,j);
+        y_mr = ans1(i,n+j);
+        r_mr = inputs.r_mr(j);
+        position = [x_mr-r_mr, y_mr-r_mr, 2*r_mr, 2*r_mr];
+        rectangle('Position',position,'Curvature',1,'FaceColor','b','EdgeColor','none')
+    end
     if plotOptions.robotsTrack
         for j=1:n
-            plot(ans1(1:i,j),ans1(1:i,n+j),'r-', 'LineWidth',1 );% plot(ans1(1:i,j),ans1(1:i,n+j),'r-', 'LineWidth',3 );
+            plot(ans1(1:i,j),ans1(1:i,n+j),'r-', 'LineWidth',1 );
         end
-    end
-    %
+    end 
+    % particles
     if m > 0
-        plot(ans1(i,4*n+1:4*n+m),ans1(i,4*n+m+1:4*n+2*m),'ro', 'MarkerSize',3 , 'LineWidth',3 );%plot(ans1(i,1:n),ans1(i,n+1:2*n),'bo', 'MarkerSize',8 , 'LineWidth',3 );
-        if plotOptions.particlesTrack
-            for j=1:n
-                plot(ans1(1:i,4*n+1:4*n+m),ans1(1:i,4*n+m+1:4*n+2*m),'r-', 'LineWidth',1 );% plot(ans1(1:i,j),ans1(1:i,n+j),'r-', 'LineWidth',3 );
+        for j=1:m
+            fp = inputs.fps{j};
+            x_fp = ans1(i,4*n+j);
+            y_fp = ans1(i,4*n+m+j);
+            if fp.type == 1
+                r_fp = fp.radius;
+                position = [x_fp-r_fp, y_fp-r_fp, 2*r_fp, 2*r_fp];
+                rectangle('Position',position,'Curvature',1,'FaceColor','r','EdgeColor','none')
+            elseif fp.type == 2
+                t_fp = ans1(i,4*n+4*m+j);
+                fp_points = fp.points + [x_fp; y_fp];
+                plot([fp_points(1,:) fp_points(1,1)], [fp_points(2,:) fp_points(2,1)],'r-', 'LineWidth',1 );
+            end
+            if plotOptions.particlesTrack
+                plot(ans1(1:i,4*n+j),ans1(1:i,4*n+m+j),'r-', 'LineWidth',1 );
             end
         end
     end
-    %
-    xlim([-vars.plotDomain vars.plotDomain]);
-    ylim([-vars.plotDomain vars.plotDomain]);
-    axis square
-    %
     %
     if plotOptions.fieldVectors
         plot_field = streamslice(vars.x_space,vars.y_space,plotData(i).Frho,plotData(i).Faxial,'method','cubic');
@@ -136,11 +154,12 @@ for i=1:size(ans1,1)
         annotation( 'textbox', 'String', sprintf('%s', text{:}), 'Color', 'k', ...
             'FontSize', 14, 'Units', 'normalized', 'EdgeColor', 'none', ...
             'Position', [0.75,0.9,0.5,0] )
-    end
-    %
-    title(sprintf('t = %1.3f s', t(i)),'Color','r', 'FontSize', 30)
+    end   
     %
     hold off
+    xlim([-vars.plotDomain vars.plotDomain]);
+    ylim([-vars.plotDomain vars.plotDomain]);
+    axis square
     xlabel('x [m]','interpreter','latex')
     ylabel('y [m]','interpreter','latex')
     set(gca, 'fontsize', 30)

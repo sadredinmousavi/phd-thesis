@@ -84,11 +84,13 @@ vars.r_mr_0 = r_mr_0;
 if exist('x_fp_0', 'var') == 1
     vars.x_fp_0 = x_fp_0;
     vars.y_fp_0 = y_fp_0;
-    vars.r_fp_0 = r_fp_0;
+    vars.t_fp_0 = t_fp_0;
+    vars.fps = fps;
 else
     vars.x_fp_0 = [];
     vars.y_fp_0 = [];
     vars.r_fp_0 = [];
+    vars.fps = [];
 end
 
 %% Define Walls
