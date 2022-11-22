@@ -40,13 +40,11 @@ sigma = 1 * 1e-5;
 epsilun = 0.01;
 LJ_potential = @(r)4*epsilun*( (sigma/r)^12 - (sigma/r)^6 );
 LJ_force     = @(r)4*epsilun*( -12*(sigma/r)^12/r + 6*(sigma/r)^6/r );
-fplot(LJ_potential,[sigma/10,3*sigma]);
-fplot(LJ_force,[0.000001,0.0005])
 %
 sigma2 = 1 * 1e-5;
 epsilun2 = 10;
 LJ_potential2 = @(r)4*epsilun2*( (sigma2/r)^12 - (sigma2/r)^6 );
-LJ_force2     = @(r)4*epsilun2*( -12*(sigma2/r)^12/r + 6*(sigma2/r)^6/r );
+LJ_force2     = @(r,epsilun)4*epsilun*( -12*(sigma2/r)^12/r + 6*(sigma2/r)^6/r );
 %
 for i=1:n
     F = force_field_symbolic(x_mr(i), y_mr(i), Psai);
@@ -96,7 +94,7 @@ for cnt = 1:m
         mo_buff = 0;
         %
         mr_radius = inputs.r_mr(i);
-        threshold = 3*mr_radius;
+        threshold = 1.2*mr_radius;
         if fp.type == 1
             fp_radius = fp.radius;
             r = sqrt( (x_fp(cnt)-x_mr(i))^2 + (y_fp(cnt)-y_mr(i))^2 ) - fp_radius - mr_radius;
@@ -117,7 +115,8 @@ for cnt = 1:m
                 [r,isInContact,normal_i] = calculateDistanceToWallLinear([x_mr(i); y_mr(i)], wall{j}, threshold);% direction wall to point
                 r = r - mr_radius;
                 if isInContact
-                    force = LJ_force2(r);
+                    epsilun = max(fx)*1000;
+                    force = LJ_force2(r, epsilun);
                     fx_buff = fx_buff + normal_i(1)*force;
                     fy_buff = fy_buff + normal_i(2)*force;
 %                     mo_buff = mo_buff + normal_i(2)*force;
@@ -145,14 +144,16 @@ for wlt = 1:w
     for i=1:n
         mr_radius = inputs.r_mr(i);
         if inputs.walls(1,wlt) == 0 % wall type
-            threshold = 3*mr_radius;
+            threshold = 1.2*mr_radius;
             [r,isInContact,normal_i] = calculateDistanceToWallLinear([x_mr(i); y_mr(i)], inputs.walls(2:5,wlt), threshold);% direction wall to point
             r = r - mr_radius;
         elseif inputs.walls(1,wlt) == 1
             a=1;
         end
         if isInContact
-            force = LJ_force(r);
+            epsilun_buff = 10;
+            epsilun = epsilun_buff * (max(fx) / LJ_force2(1.25*sigma2, epsilun_buff));
+            force = LJ_force2(r, epsilun);
             if force>0
                 force
             end
