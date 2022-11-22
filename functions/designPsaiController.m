@@ -25,7 +25,7 @@ function [] = designPsaiController(inputs)
         end
         %
         %
-        if inputs.usePrepaidPsai
+        if inputs.usePreparedPsai
             Psai_t(:,i) = inputs.Psai(:,i);
         else
             for j=1:length(eqP)

@@ -1,59 +1,20 @@
-%% Cylinder magnetic field visualization
- % This script is a DEMO for the visualization of the magnetic flux density 
- % field lines of an axially magnetized cylinder. 
-
-
-%%
-plotOptions = vars.plotOptions.dynamic;
-
-options = odeset('OutputFcn',@odeprog,'Events',@odeabort);
-ans0_mr = [vars.x_mr_0 vars.y_mr_0 zeros(1,length(vars.x_mr_0)) zeros(1,length(vars.y_mr_0))];
-ans0_fp = [vars.x_fp_0 vars.y_fp_0 zeros(1,length(vars.x_fp_0)) zeros(1,length(vars.y_fp_0)) vars.t_fp_0 zeros(1,length(vars.t_fp_0))];
-ans0    = [ans0_mr ans0_fp];
-%
-% inputs = vars.dynamicSolverInputs;
-inputs.walls  = vars.walls;
-inputs.mr_num = length(vars.x_mr_0);
-inputs.fp_num = length(vars.x_fp_0);
-inputs.fps = vars.fps;
-inputs.r_mr = vars.r_mr_0;
-%
-[t,ans1] = ode45(@(t,y)systemDynamics(t,y,inputs), vars.tspan, ans0, options);
-Npoints = length(vars.x_space);
-%
-%
-waitText  = 'Gathering plot data  - Please wait...';
-waitIters = size(ans1,1);
-waitHandle = waitbar(0,waitText);
-for i=1:size(ans1,1)
-    waitbar(i/waitIters,waitHandle, waitText);
-    [Psai,eqPoints_sequence,targetInd,real_eqPoint_x_seq,real_eqPoint_y_seq] = psaiController(t(i));
-%     Psai = psaiController(t(i));
-    if plotOptions.fieldVectors
-        [~, Frho, Faxial] = calculateForceField(vars.x_space,vars.y_space,Psai);
-        plotData(i).Frho = Frho;
-        plotData(i).Faxial = Faxial;
-    end
-%     plotData(i).eqPoints;
-    plotData(i).targetInd = targetInd;
-    plotDataStatic.real_eqPoint_x_seq(:,i) = real_eqPoint_x_seq;
-    plotDataStatic.real_eqPoint_y_seq(:,i) = real_eqPoint_y_seq;
-    plotDataStatic.eqPoints_sequence = eqPoints_sequence;
-    plotData(i).Psai = Psai;
-end
-close(waitHandle)
+function [] = plotOutputToGif(dataFileName, plotOptionsFromInput)
 
 
 
-%%
+
 p1 = figure;
 set(p1, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
 set(gcf, 'color', 'w');
 % pause(2)
 cd('data')
-
-
-
+%
+load(dataFileName)
+plotOptions = vars.plotOptions.dynamic;
+if nargin > 1
+    plotOptions = plotOptionsFromInput;
+end
+%
 n = inputs.mr_num;
 m = inputs.fp_num;
 w = size(inputs.walls,2);
@@ -115,7 +76,7 @@ for i=1:size(ans1,1)
     end
     %
     if plotOptions.areaBorders
-        plot([min(x_space) max(x_space) max(x_space) min(x_space) min(x_space)], [min(y_space) min(y_space) max(y_space) max(y_space) min(y_space)], 'k-')
+        plot([min(vars.x_space) max(vars.x_space) max(vars.x_space) min(vars.x_space) min(vars.x_space)], [min(vars.y_space) min(vars.y_space) max(vars.y_space) max(vars.y_space) min(vars.y_space)], 'k-')
     end
     %
     if plotOptions.eqPoints %real eqpoints is the target when vars.findEqFromMinimization = 0;
@@ -140,7 +101,7 @@ for i=1:size(ans1,1)
             for k=1:size(plotDataStatic.real_eqPoint_x_seq,1)
                 eqPoint = [plotDataStatic.real_eqPoint_x_seq(k,i) plotDataStatic.real_eqPoint_y_seq(k,i)];
                 [r1, a1, b1, c1] = calculateParamsFromPoint(eqPoint, vars.MagPos);
-                [isStable1,hessian.point1] = isHessianStable(Psai, a1, b1, c1);
+                [isStable1,hessian.point1] = isHessianStable(plotData(i).Psai, a1, b1, c1);
                 [V,D] = eig(hessian.point1); % V(:,i)
                 angle1 = atan(V(2,1)/V(1,1))*(180/pi);
                 angle2 = atan(V(2,2)/V(1,2))*(180/pi);
@@ -174,4 +135,7 @@ for i=1:size(ans1,1)
     end
 end
 cd('..')
+
+
+end
 

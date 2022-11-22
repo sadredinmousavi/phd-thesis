@@ -10,11 +10,14 @@ addpath(genpath('inputFiles'))
 inputFile001_7
 
 
-% [r,isInContact,normalVector] = calculateDistanceToWallLinear([0;0], [-3;0;0;3])
 
 %% Define parameters
 vars = args;
 vars.args = args;
+vars.sigma = sigma;
+vars.epsilun = epsilun;
+vars.drag_coeff = drag_coeff;
+vars.threshold = threshold;
 
 
 %% Define PMs locations
@@ -79,17 +82,22 @@ vars.plotOptions.dynamic = plotOptionsDyn;
 vars.x_mr_0 = x_mr_0;
 vars.y_mr_0 = y_mr_0;
 vars.r_mr_0 = r_mr_0;
+vars.m_mr_0 = m_mr_0;
 
 %% Define FPs locations
 if exist('x_fp_0', 'var') == 1
     vars.x_fp_0 = x_fp_0;
     vars.y_fp_0 = y_fp_0;
     vars.t_fp_0 = t_fp_0;
+    vars.m_fp_0 = m_fp_0;
+    vars.i_fp_0 = i_fp_0;
     vars.fps = fps;
 else
     vars.x_fp_0 = [];
     vars.y_fp_0 = [];
     vars.r_fp_0 = [];
+    vars.m_fp_0 = [];
+    vars.i_fp_0 = [];
     vars.fps = [];
 end
 
@@ -229,7 +237,7 @@ end
 % % eqPoint = [t1 t2 t3 ...; x1 x2 x3 ...; y1 y2 y3 ...]
 vars.tspan = tspan;
 vars.eqPoints = eqPoints;
-vars.usePrepaidPsai = usePrepaidPsai;
+vars.usePreparedPsai = usePreparedPsai;
 if usePrepaidPsai
     vars.Psai = Psai;
 end
@@ -238,7 +246,7 @@ end
 % vars.eqPoints.x_eqPoints_0 = eq_x;
 % vars.eqPoints.y_eqPoints_0 = eq_y;
 
-designPsaiController(vars);
+
 
 
 %%

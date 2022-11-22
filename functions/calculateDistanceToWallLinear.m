@@ -15,7 +15,7 @@ if r < threshold
     %
     if theta1 <= 90 && theta2 <= 90
         isInContact = 1;
-        projectedPointOnTheWall = wall(3:4,1) + v3(1:2)./norm(v3) * ( norm(v4)*sind(theta2) );
+        projectedPointOnTheWall = wall(3:4,1) + v3(1:2)./norm(v3) * ( norm(v4)*cosd(theta2) );
         normalVector = point(1:2,1) - projectedPointOnTheWall;
         normalVector = normalVector ./ norm(normalVector);
         % direction from wall to point
