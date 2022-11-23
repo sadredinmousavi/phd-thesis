@@ -91,7 +91,7 @@ if exist('x_fp_0', 'var') == 1
 else
     vars.x_fp_0 = [];
     vars.y_fp_0 = [];
-    vars.r_fp_0 = [];
+    vars.t_fp_0 = [];
     vars.m_fp_0 = [];
     vars.i_fp_0 = [];
     vars.fps = [];
@@ -234,7 +234,7 @@ end
 vars.tspan = tspan;
 vars.eqPoints = eqPoints;
 vars.usePreparedPsai = usePreparedPsai;
-if usePrepaidPsai
+if usePreparedPsai
     vars.Psai = Psai;
 end
 % % [eq_x,eq_y] = findEqPoints_Dynamics(x_space,y_space,Psai_0);
@@ -250,7 +250,6 @@ cd('data')
 save(fileName1, '-struct', 'vars')
 cd('..')
 
-run_4__1
 
 
 

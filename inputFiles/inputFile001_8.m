@@ -17,7 +17,14 @@ args.mr.m = args.M * (pi*args.mr.D^2/4*args.mr.L);
 args.mr.m = args.mr.m * 1e3; %%%%%%%%% note
 args.pm.L = args.pm.L * 1e0; %%%%%%%%% note
 args.pm.D = args.pm.D * 1e0; %%%%%%%%% note
-
+% Lennard Jones potential
+sigma = 1 * 1e-5;
+epsilun = 1e-6; % 0.01; 1e-8;
+threshold = 5*sigma;
+% epsilun = 1000; % 0.01; 1e-8;
+% threshold = 5*sigma + 0.004;
+% Drag
+drag_coeff = 16/3*0.01*(0.25/1e3);
 
 
 
@@ -53,16 +60,20 @@ plotOptionsDyn.areaBorders = 1;
 plotOptionsDyn.robotsTrack = 0;
 plotOptionsDyn.particlesTrack = 0;
 plotOptionsDyn.channelLines = 1;
-plotOptionsDyn.eqPoints = 1;
-plotOptionsDyn.eqPointsTrack = 1;
+plotOptionsDyn.eqPoints = 0;
+plotOptionsDyn.eqPointsTrack = 0;
 plotOptionsDyn.printPsaiValues = 1;
 plotOptionsDyn.printLambdaValues = 1;
 
 
 
-%% Define MRs locations
-r_mr = 0.001;
-center1 = [-0.05, 0.02];
+%% Define MRs locations and parameters
+r_mr = 0.002;
+m_mr = [
+    4/3*pi*0.025^3*(3) / 1e3 %Rho_pla = 1.25 g/cm3 Rho_Neodymium = 7.5 g/cm3 r=0.025 cm
+];
+%
+center1 = [-0.05, +0.08];
 num1 = 3; %4
 offset1 = 0.02;
 x_serie1 = linspace(center1(1)-offset1, center1(1)+offset1, num1);
@@ -70,7 +81,7 @@ y_serie1 = linspace(center1(2)-offset1, center1(2)+offset1, num1);
 [x_mr__,y_mr__] = meshgrid(x_serie1,y_serie1);
 x_mr_1 = reshape(x_mr__, 1, []);
 y_mr_1 = reshape(y_mr__, 1, []);
-center2 = [+0.05, 0.02];
+center2 = [+0.05, +0.08];
 num2 = 3; %4
 offset2 = 0.02;
 x_serie2 = linspace(center2(1)-offset2, center2(1)+offset2, num2);
@@ -82,16 +93,46 @@ y_mr_2 = reshape(y_mr__, 1, []);
 x_mr_0 = [x_mr_1 x_mr_2];
 y_mr_0 = [y_mr_1 y_mr_2];
 r_mr_0 = r_mr * ones(1, length(x_mr_0));
+m_mr_0 = m_mr * ones(1, length(x_mr_0));
 
 %% Define Free particles locations
+% % type 1 --> circle
+% % type 2 --> linear
 
-x_fp_0 = [+0.00 +0.00];
-y_fp_0 = [+0.08 +0.04];
-t_fp_0 = [+0.00 +0.00];
-fps{1}.type = 1;
-fps{1}.points = [ [0;1] [0;1] [0;1] ];
-fps{2}.type = 1;
-fps{2}.points = [ [0;1] [0;1] [0;1] [0;1] ];
+% x_fp_0 = [+0.00 +0.00];
+% y_fp_0 = [+0.08 +0.04];
+% t_fp_0 = [+0.00 +0.00];
+% m_fp_0 = m_mr * ones(1, length(x_fp_0));
+% i_fp_0 = m_mr * ones(1, length(x_fp_0));
+% 
+% fps{1}.type = 1;
+% fps{1}.radius = 0.002;
+% fps{2}.type = 2;
+% fps{2}.points = 0.004 * [ [-1;-1] [+1;-1] [+1;+1] [-1;+1] ];
+
+
+%
+
+% x_fp_0 = [+0.00];
+% y_fp_0 = [+0.05 ];
+% t_fp_0 = [+0.00];
+% m_fp_0 = m_mr * ones(1, length(x_fp_0));
+% i_fp_0 = m_mr * ones(1, length(x_fp_0));
+% %
+% fps{1}.type = 1;
+% fps{1}.radius = 0.006 ;
+
+
+% x_fp_0 = [+0.00];
+% y_fp_0 = [+0.08 ];
+% t_fp_0 = [+0.00];
+% m_fp_0 = m_mr * ones(1, length(x_fp_0));
+% i_fp_0 = m_mr * ones(1, length(x_fp_0));
+% %
+% fps{1}.type = 2;
+% fps{1}.points = 0.004 * [ [-1;-1] [+1;-1] [+1;+1] [-1;+1] ];
+
+
 
 
 %% Define path and eqPoints desired locations during simulation time
@@ -102,8 +143,11 @@ fps{2}.points = [ [0;1] [0;1] [0;1] [0;1] ];
 eqPoint1 = [ [0;-0.05;+0.00] [100;-0.05;+0.02] [200;-0.05;+0.04] [250;-0.03;+0.07] [300;-0.01;+0.09] [400;+0.00;+0.10] [500;+0.00;+0.05] [600;+0.00;+0.00] ];
 eqPoint2 = [ [0;+0.05;+0.00] [100;+0.05;+0.02] [200;+0.05;+0.04] [250;+0.03;+0.07] [300;+0.01;+0.09] [400;+0.00;+0.10] [500;+0.00;+0.05] [600;+0.00;+0.00] ];
 
-eqPoint1 = [ [0;-0.05;+0.00] [100;-0.05;+0.02] [200;-0.05;+0.04] [250;-0.03;+0.07] [300;-0.01;+0.09] [400;+0.00;+0.10] [500;+0.00;+0.08] [600;+0.00;+0.06] [700;+0.00;+0.04] [800;+0.00;+0.02] [900;+0.00;+0.00] ];
-eqPoint2 = [ [0;+0.05;+0.00] [100;+0.05;+0.02] [200;+0.05;+0.04] [250;+0.03;+0.07] [300;+0.01;+0.09] [400;+0.00;+0.10] [500;+0.00;+0.08] [600;+0.00;+0.06] [700;+0.00;+0.04] [800;+0.00;+0.02] [900;+0.00;+0.00] ];
+eqPoint1 = [ [0;-0.05;+0.08] [100;-0.05;+0.07] [200;-0.03;+0.06] [300;-0.00;+0.05] [400;-0.00;+0.02] [500;+0.00;-0.04] [600;+0.00;-0.07] [700;+0.05;-0.06] [800;+0.07;-0.06] [900;+0.12;-0.06] [1000;+0.14;-0.03] [1100;+0.12;+0.00] ];
+eqPoint2 = [ [0;+0.05;+0.08] [100;+0.05;+0.07] [200;+0.03;+0.06] [300;+0.00;+0.05] [400;+0.00;+0.02] [500;+0.00;-0.04] [600;+0.00;-0.07] [700;+0.05;-0.06] [800;+0.07;-0.06] [900;+0.12;-0.06] [1000;+0.14;-0.09] [1100;+0.12;-0.12] ];
+
+% eqPoint1 = [ [0;-0.05;+0.00] [100;-0.05;+0.02] [200;-0.05;+0.04] [250;-0.03;+0.07] [300;-0.01;+0.09] [400;+0.00;+0.10] [500;+0.00;+0.08] ];
+% eqPoint2 = [ [0;+0.05;+0.00] [100;+0.05;+0.02] [200;+0.05;+0.04] [250;+0.03;+0.07] [300;+0.01;+0.09] [400;+0.00;+0.10] [500;+0.00;+0.08] ];
 
 
 eqPoints{1} = eqPoint1;
@@ -111,19 +155,44 @@ eqPoints{2} = eqPoint2;
 
 %
 %
-tspan = 0:10:max(eqPoint1(1,end),eqPoint2(1,end))+500;%tspan = 0:1/5:120;%tspan = 0:1/24:30;
+tspan = 0:10:max(eqPoint1(1,end),eqPoint2(1,end))+500;
+% tspan = 0:10:max(eqPoint1(1,end),eqPoint2(1,end));
 %
 %
-usePrepaidPsai = 0;%%%%% note
+usePreparedPsai = 0;%%%%% note
 
 
 %% Define Walls
 
 % path inputs --> [point1 point2 startTime endTime dt]
-% % wall = [type1 type2 type3 ...; x1 x2 x3 ...; y1 y2 y3 ...; x1_ x2_ x3_ ...; y1_ y2_ y3_ ...]
-% % wall_linear = [type; x1; y1; x2; y2]  --> type 0
-% % wall_circle = [type; x1; y1; r0; 00]  --> type 1
-walls = [ [0;-0.10;+0.05;-0.05;+0.05] [0;-0.05;+0.05;-0.03;+0.08] [0;-0.03;+0.08;-0.01;+0.09] ];
+% wall = [type1 type2 type3 ...; x1 x2 x3 ...; y1 y2 y3 ...; x1_ x2_ x3_ ...; y1_ y2_ y3_ ...]
+% wall_linear = [type; x1; y1; x2; y2]  --> type 0
+% wall_circle = [type; x1; y1; r0; 00]  --> type 1
+
+walls = [ [0;-0.04;+0.04;-0.03;-0.04] [0;+0.04;+0.04;+0.03;-0.04] [0;-0.03;-0.04;-0.03;-0.09] [0;-0.03;-0.09;+0.09;-0.09] [0;+0.03;-0.04;+0.09;-0.04] ];
+
+
+
+
+
+%%
+prepareTheInputs
+solveTheSystem(vars);
+plotOutputToGif(vars.fileName3);
+
+% plotOptionsDyn.fieldVectors = 0;
+% plotOptionsDyn.magnets = 1;
+% plotOptionsDyn.areaBorders = 1;
+% plotOptionsDyn.robotsTrack = 0;
+% plotOptionsDyn.particlesTrack = 0;
+% plotOptionsDyn.channelLines = 1;
+% plotOptionsDyn.eqPoints = 0;
+% plotOptionsDyn.eqPointsTrack = 0;
+% plotOptionsDyn.printPsaiValues = 1;
+% plotOptionsDyn.printLambdaValues = 1;
+% plotOutputToGif(vars.fileName3, plotOptionsDyn);
+
+
 
 %%
 function [eqPoint1] = defineLinearPath(eqPoint0, eqPoint1, t0, refreshTime, speed)

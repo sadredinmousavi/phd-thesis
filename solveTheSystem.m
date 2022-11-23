@@ -29,7 +29,7 @@ inputs.epsilun = vars.epsilun;
 inputs.threshold = vars.threshold;
 %
 designPsaiController(vars);
-[t,ans1] = ode15s(@(t,y)systemDynamics(t,y,inputs), vars.tspan, ans0, options);
+[t,ans1] = ode113(@(t,y)systemDynamics(t,y,inputs), vars.tspan, ans0, options);
 Npoints = length(vars.x_space);
 %
 %

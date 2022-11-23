@@ -40,11 +40,10 @@ epsilun = inputs.epsilun;
 LJ_potential = @(r)4*epsilun*( (sigma/r)^12 - (sigma/r)^6 );
 LJ_force     = @(r)4*epsilun*( -12*(sigma/r)^12/r + 6*(sigma/r)^6/r );
 %
-D_e = epsilun;
-r_e = sigma;
-k_e = 100;
-a = k_e/2/D_e;
-MorsePotential = @(r) D_e * ( 1-exp(-a*(r-r_e)) )^2;
+D_e = 1e-5;
+r_e = 1e-5;
+e^()
+MorseForce   = @(r)
 %
 % sigma2 = 1 * 1e-5;
 % epsilun2 = 0.01;
