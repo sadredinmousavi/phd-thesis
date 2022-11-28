@@ -2,6 +2,9 @@
  % all paramers have to be set in here
  % s 
 
+addpath(genpath('functions'))
+addpath(genpath('inputFiles'))
+
 
 %% Define parameters
 args.mu_0 = 4*pi*1e-7;
@@ -155,8 +158,10 @@ eqPoints{2} = eqPoint2;
 
 %
 %
-tspan = 0:10:max(eqPoint1(1,end),eqPoint2(1,end))+500;
-% tspan = 0:10:max(eqPoint1(1,end),eqPoint2(1,end));
+tspan.endTime = max(eqPoint1(1,end),eqPoint2(1,end)) + 500;
+tspan.startTime = 0;
+tspan.stepForSolve = 0.01;
+tspan.stepForOutput = 10;
 %
 %
 usePreparedPsai = 0;%%%%% note
