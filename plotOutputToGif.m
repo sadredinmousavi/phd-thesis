@@ -18,7 +18,7 @@ end
 n = inputs.mr_num;
 m = inputs.fp_num;
 w = size(inputs.walls,2);
-for i=1:100:size(ans1,1)
+for i=1:size(ans1,1)
     delete(findall(gcf,'type','annotation'))
     clf(gcf)
     title(sprintf('t = %1.3f s', t(i)),'Color','r', 'FontSize', 30)

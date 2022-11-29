@@ -155,8 +155,8 @@ for wlt = 1:w
         elseif inputs.walls(1,wlt) == 1
             a=1;
         end
-        if isInContact
-            reactionForceMax = abs( dot([fx(i) fy(i)], normal_i) );
+        if isInContact && r > 0
+            reactionForceMax = 1.001 * abs( dot([fx(i) fy(i)], normal_i) );
             force = min(LJ_force(r), reactionForceMax);
             fx(i) = fx(i) + normal_i(1)*force;
             fy(i) = fy(i) + normal_i(2)*force;

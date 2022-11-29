@@ -29,9 +29,8 @@ inputs.epsilun = vars.epsilun;
 inputs.threshold = vars.threshold;
 %
 designPsaiController(vars);
-time = vars.tspan.startTime:vars.tspan.stepForOutput:vars.tspan.endTime;
-% [t,ans1] = ode113(@(t,y)systemDynamics(t,y,inputs), time, ans0, options);
-[t,ans1] = myRungeKutta(@(t,y)systemDynamics(t,y,inputs), vars.tspan, ans0);
+[t,ans1] = ode15s(@(t,y)systemDynamics(t,y,inputs), vars.tspan, ans0, options);
+% [t,ans1] = myRungeKutta(@(t,y)systemDynamics(t,y,inputs), vars.tspan, ans0);
 Npoints = length(vars.x_space);
 %
 %
