@@ -2,7 +2,7 @@
  % This script is a DEMO for the visualization of the magnetic flux density 
  % field lines of an axially magnetized cylinder. 
 
-clc, close all
+
 addpath(genpath('functions'))
 addpath(genpath('inputFiles'))
 

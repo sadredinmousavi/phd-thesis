@@ -111,8 +111,26 @@ for cnt = 1:m
                 fy_buff = fy_buff + normal_i(2)*force;
             end
         elseif fp.type == 2
-%             fp_points = fp.points + [x_fp(cnt); y_fp(cnt)];
-%             vector =  [x_fp(cnt) y_fp(cnt)] - [x_mr(i) y_mr(i)];
+            vector =  [x_fp(cnt) y_fp(cnt)] - [x_mr(i) y_mr(i)];
+            fp_length = fp.length;
+            theta_vec = atan2(vector(2), vector(1));
+            theta_rec = t_fp(cnt);
+            theta = theta_vec - theta_rec;
+            r_x = abs(vector(1)) - fp_length/2 - mr_radius;
+            r_y = abs(vector(2)) - fp_length/2 - mr_radius;
+            r__ = norm(vector) - sqrt(2)/2*fp_length - mr_radius;
+            r = max(r_x, r_y);
+            if r__ < threshold
+                force = min(LJ_force(r), contactForceaMax); %% note
+                if r_x < r_y % direction from j to i
+                    normal_i = [1 0] * sign(vector(1));
+                else
+                    normal_i = [0 1] * sign(vector(2));
+                end
+                fx_buff = fx_buff + normal_i(1)*force;
+                fy_buff = fy_buff + normal_i(2)*force;
+            end
+        elseif fp.type == 3
             fp_points = fp.points + [x_fp(cnt); y_fp(cnt)];
             wall{1} = [fp_points(1:2,1); fp_points(1:2,end)];
             for  j=1:size(fp_points,2)-1
@@ -155,8 +173,8 @@ for wlt = 1:w
         elseif inputs.walls(1,wlt) == 1
             a=1;
         end
-        if isInContact
-            reactionForceMax = abs( dot([fx(i) fy(i)], normal_i) );
+        if isInContact && r > 0
+            reactionForceMax = 1.001 * abs( dot([fx(i) fy(i)], normal_i) );
             force = min(LJ_force(r), reactionForceMax);
             fx(i) = fx(i) + normal_i(1)*force;
             fy(i) = fy(i) + normal_i(2)*force;

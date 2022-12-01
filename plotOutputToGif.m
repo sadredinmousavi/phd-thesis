@@ -49,6 +49,11 @@ for i=1:size(ans1,1)
                 rectangle('Position',position,'Curvature',1,'FaceColor','r','EdgeColor','none')
             elseif fp.type == 2
                 t_fp = ans1(i,4*n+4*m+j);
+                fp_length = fp.length;
+                position = [x_fp-fp_length/2, y_fp-fp_length/2, fp_length, fp_length];
+                rectangle('Position',position,'Curvature',0,'FaceColor','r','EdgeColor','none')
+            elseif fp.type == 3
+                t_fp = ans1(i,4*n+4*m+j);
                 fp_points = fp.points + [x_fp; y_fp];
                 plot([fp_points(1,:) fp_points(1,1)], [fp_points(2,:) fp_points(2,1)],'r-', 'LineWidth',1 );
             end

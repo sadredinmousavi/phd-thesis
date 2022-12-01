@@ -29,7 +29,8 @@ inputs.epsilun = vars.epsilun;
 inputs.threshold = vars.threshold;
 %
 designPsaiController(vars);
-[t,ans1] = ode113(@(t,y)systemDynamics(t,y,inputs), vars.tspan, ans0, options);
+[t,ans1] = ode45(@(t,y)systemDynamics(t,y,inputs), vars.tspan, ans0, options);
+% [t,ans1] = myRungeKutta(@(t,y)systemDynamics(t,y,inputs), vars.tspan, ans0);
 Npoints = length(vars.x_space);
 %
 %
@@ -57,6 +58,29 @@ close(waitHandle)
 cd('data')
 save(vars.fileName3, 'vars', 'inputs', 'plotData', 'plotDataStatic', 't', 'ans1')
 cd('..')
+
+
+function [tspan, X] = myRungeKutta(Fun, tspan, X0)
+    waitText_  = 'Solving the equations  - Please wait...';
+    waitIters_ = length(tspan);
+    waitHandle_ = waitbar(0,waitText_);
+    dt = tspan(2)-tspan(1);
+    X(:,1)  = X0;
+    for i_=1:length(tspan)-1
+        waitbar(i_/waitIters_,waitHandle_, waitText_);
+        t_  = tspan(i_);
+        Xi = X(:,i_);
+        K1 = Fun(t_,Xi);
+        K2 = Fun(t_+dt/2,Xi+K1*dt/2);
+        K3 = Fun(t_+dt/2,Xi+K2*dt/2);
+        K4 = Fun(t_+dt,Xi+K3*dt);
+        Xi = Xi+(K1+2*K2+2*K3+K4)/6*dt;
+        X(:,i_+1)=Xi;
+    end
+    X = X';
+    close(waitHandle_)
+end
+
 
 end
 
