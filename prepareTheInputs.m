@@ -112,8 +112,8 @@ choice = questdlg(dlgQuestion,dlgTitle,'Yes','No', 'Yes');
 if strcmp(choice, 'Yes') == 1
     % eqPoint1 = [ [0;+0.05;+0.00] [300;+0.03;+0.04] [600;+0.03;+0.09] ];
     % eqPoint2 = [ [0;-0.11;-0.02] [300;-0.10;-0.09] [600;+0.07;-0.10] ];
-    eq_points{1} = [+0.05 +0.03];
-    eq_points{2} = [+0.05 +0.03];
+    eq_points{1} = [+0.09 -0.07];
+    eq_points{2} = [+0.09 -0.07];
 %     eq_points{3} = [+0.00 -0.08];
     vars.plotOptions.static.plotEqPoints = 1;
     vars.plotOptions.static.printLambdaValues = 1;

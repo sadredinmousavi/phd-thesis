@@ -16,6 +16,9 @@
 % plotOutputToGif('47_datas.mat');%ode45  100*sigma 6mm circle
 % plotOutputToGif('58_datas.mat');%ode45  100*sigma 4mm rectangle
 
+% plotOutputToGif('71_datas.mat');%ode45  100*sigma 6mm circle
+% plotOutputToGif('74_datas.mat');%ode45  5*sigma 6mm circle
+
 
 
 
@@ -30,5 +33,5 @@ plotOptionsDyn.eqPointsTrack = 0;
 plotOptionsDyn.printPsaiValues = 1;
 plotOptionsDyn.printLambdaValues = 1;
 
-plotOutputToGif('61_datas.mat', plotOptionsDyn);
+plotOutputToGif('58_datas.mat', plotOptionsDyn);
 % plotOutputToGif(vars.fileName3, plotOptionsDyn);

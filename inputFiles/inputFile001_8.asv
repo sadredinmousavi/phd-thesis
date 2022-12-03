@@ -27,7 +27,7 @@ sigma = 1 * 1e-5;
 % threshold = 5*sigma;
 % epsilun = 1; % 1000; 1e-8;
 % threshold = 5*sigma + 0.001; %5*sigma + 0.004;
-epsilun = 5e-11; % 1000; 1e-8;
+epsilun = 5e-10; % 1000; 1e-8;
 threshold = 5*sigma; %5*sigma + 0.004;
 % Drag
 drag_coeff = 16/3*0.01*(0.25/1e3);
@@ -120,14 +120,14 @@ m_mr_0 = m_mr * ones(1, length(x_mr_0));
 
 %
 
-x_fp_0 = [+0.00];
-y_fp_0 = [+0.05 ];
-t_fp_0 = [+0.00];
-m_fp_0 = m_mr * ones(1, length(x_fp_0));
-i_fp_0 = m_mr * ones(1, length(x_fp_0));
-%
-fps{1}.type = 1;
-fps{1}.radius = 0.006 ;
+% x_fp_0 = [+0.00];
+% y_fp_0 = [+0.05 ];
+% t_fp_0 = [+0.00];
+% m_fp_0 = m_mr * ones(1, length(x_fp_0));
+% i_fp_0 = m_mr * ones(1, length(x_fp_0));
+% %
+% fps{1}.type = 1;
+% fps{1}.radius = 0.006 ;
 
 
 % x_fp_0 = [+0.00];

@@ -28,23 +28,14 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
     %
     options = optimoptions('fmincon');
     options = optimoptions(options,'Display', 'off');
-    if nargin > 2
-        [Psai1,fval,exitflag,output,lambda,grad,hessian] = fmincon(costFun,Psai_0,A,b,Aeq,beq,lb,ub,@(Psai) stabilityConstraints(Psai, points, MagPos, lambda), options);
-    else
-        [Psai1,fval,exitflag,output,lambda,grad,hessian] = fmincon(costFun,Psai_0,A,b,Aeq,beq,lb,ub,@(Psai) stabilityConstraints(Psai, points, MagPos), options);
-%         [Psai2,fval,exitflag,output,lambda,grad,hessian] = fmincon(costFun,Psai_0,A,b,Aeq,beq,lb,ub);
-    end
-    
+    [Psai1,fval,exitflag,output,lambda,grad,hessian] = fmincon(costFun,Psai_0,A,b,Aeq,beq,lb,ub,@(Psai) stabilityConstraints(Psai, points, MagPos), options);
+%     [Psai2,fval,exitflag,output,lambda,grad,hessian] = fmincon(costFun,Psai_0,A,b,Aeq,beq,lb,ub);
 
     Psai = Psai1;
     
     error = costFun(Psai);
     error2 = forceEqs(Psai);
-    if nargin > 2
-        c_ = stabilityConstraints(Psai, points, MagPos, lambda);
-    else
-        c_ = stabilityConstraints(Psai, points, MagPos);
-    end
+    c_ = stabilityConstraints(Psai, points, MagPos);
 
     rankM=4;
     hasAns=0;
@@ -78,11 +69,9 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
             c(2*k-1:2*k, 1) = d1;
         end
         if nargin > 3
-            ref = angle1(1,1);
-            const = abs( ref - extraParam );
-            if const < 0.1 * ref
-                const = - const;
-            end
+            ref = 
+            const = abs( -extraParam );
+            if const > 0.1 * 
             c = [c; angle1(1,1)-extraParam];
         end
 %         k=k+1;
