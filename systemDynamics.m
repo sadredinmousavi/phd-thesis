@@ -38,8 +38,8 @@ threshold = inputs.threshold;
 sigma = inputs.sigma;
 epsilun = inputs.epsilun;
 LJ_potential = @(r)4*epsilun*( (sigma/r)^12 - (sigma/r)^6 );
-% LJ_force     = @(r)4*epsilun*( -12*(sigma/r)^12/r + 6*(sigma/r)^6/r );
-LJ_force     = @(r)4*epsilun*( + 6*(sigma/r)^6/r );
+LJ_force     = @(r)4*epsilun*( -12*(sigma/r)^12/r + 6*(sigma/r)^6/r );
+% LJ_force     = @(r)4*epsilun*( + 6*(sigma/r)^6/r );
 % LJ_force     = @(r)0.5e-8;
 %
 D_e = epsilun;
@@ -58,8 +58,6 @@ for i=1:n
     fx(i) = F(1);
     fy(i) = F(2);
 end
-% contactForceaMax = 0.5 * max(max(fx), max(fy));
-contactForceaMax = 10e-8;
 % interaction force between MRs
 for i=1:n
     for j=1:n
@@ -101,19 +99,25 @@ for cnt = 1:m
         fx_buff = 0;
         fy_buff = 0;
         mo_buff = 0;
-        mr_radius = inputs.r_mr(i);        
+        mr_radius = inputs.r_mr(i);
         if fp.type == 1
             fp_radius = fp.radius;
-            vector =  [x_fp(cnt) y_fp(cnt)] - [x_mr(i) y_mr(i)];
-            r = norm(vector) - fp_radius - mr_radius;
+            vector =  [x_fp(cnt) y_fp(cnt)] - [x_mr(i) y_mr(i)]; % direction from mr to fp
+            r =  norm(vector) - fp_radius - mr_radius ;
             if r < threshold
-                normal_i = [x_fp(cnt)-x_mr(i) y_fp(cnt)-y_mr(i)];  % direction from j to i
-                normal_i = normal_i ./ norm(normal_i);
+                normal_i = vector ./ norm(vector);
                 reactionForceMax = 1.001 * abs( dot([fx(i) fy(i)], normal_i) );
                 force = min(LJ_force(r), reactionForceMax); %% note
+                if force < 0
+                    force = reactionForceMax;
+                end
                 fx_buff = fx_buff + normal_i(1)*force;
                 fy_buff = fy_buff + normal_i(2)*force;
                 %%%
+                force;
+                if force < 0
+                    a=1;
+                end
                 force1x = fx(i);
                 force1y = fy(i);
                 forcex = fx_buff / force1x;

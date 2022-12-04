@@ -101,7 +101,7 @@ for cnt = 1:m
         fx_buff = 0;
         fy_buff = 0;
         mo_buff = 0;
-        mr_radius = inputs.r_mr(i);        
+        mr_radius = inputs.r_mr(i);
         if fp.type == 1
             fp_radius = fp.radius;
             vector =  [x_fp(cnt) y_fp(cnt)] - [x_mr(i) y_mr(i)];

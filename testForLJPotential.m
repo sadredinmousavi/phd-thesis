@@ -1,5 +1,5 @@
-% sigma = 1.2 * 1e-5;
-% epsilun = 0.01;
+% sigma = 1.0 * 1e-5;
+% epsilun = 5e-11;
 % LJ_potential = @(r)4*epsilun*( (sigma/r)^12 - (sigma/r)^6 );
 % LJ_force     = @(r)4*epsilun*( -12*(sigma/r)^12/r + 6*(sigma/r)^6/r );
 % % fplot(LJ_potential,[sigma/10,3*sigma]);
