@@ -125,7 +125,8 @@ for cnt = 1:m
                 %%%
             end
         elseif fp.type == 2
-            vector =  [x_fp(cnt) y_fp(cnt)] - [x_mr(i) y_mr(i)];
+            vector =  [x_fp(cnt) y_fp(cnt)] - [x_mr(i) y_mr(i)];  % direction from mr to fp
+            reactionForceMax = 1.001 * abs( dot([fx(i) fy(i)], normal_i) );
             fp_length = fp.length;
             theta_vec = atan2(vector(2), vector(1));
             theta_rec = t_fp(cnt);
@@ -135,8 +136,11 @@ for cnt = 1:m
             r__ = norm(vector) - sqrt(2)/2*fp_length - mr_radius;
             r = max(r_x, r_y);
             if r__ < threshold
-                force = min(LJ_force(r), contactForceaMax); %% note
-                if r_x < r_y % direction from j to i
+                force = min(LJ_force(r), reactionForceMax); %% note
+                if force < 0
+                    force = reactionForceMax;
+                end
+                if r_x < r_y
                     normal_i = [1 0] * sign(vector(1));
                 else
                     normal_i = [0 1] * sign(vector(2));

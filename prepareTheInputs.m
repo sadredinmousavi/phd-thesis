@@ -121,7 +121,7 @@ if strcmp(choice, 'Yes') == 1
     vars.plotOptions.static.eq_points = eq_points;
     
 
-    [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_points, MagPos);
+    [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_points, MagPos, 90*(pi/180));
     printFig2(vars, Psai, 0);
 %     PsaiSerie = otherOutputs.PsaiSerie;
 %     for cnt=1:length(PsaiSerie)

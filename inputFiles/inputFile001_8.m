@@ -123,11 +123,11 @@ m_mr_0 = m_mr * ones(1, length(x_mr_0));
 x_fp_0 = [+0.00];
 y_fp_0 = [+0.05 ];
 t_fp_0 = [+0.00];
-m_fp_0 = m_mr * ones(1, length(x_fp_0));
+m_fp_0 = 3 * m_mr * ones(1, length(x_fp_0));
 i_fp_0 = m_mr * ones(1, length(x_fp_0));
 %
 fps{1}.type = 1;
-fps{1}.radius = 0.006 ;
+fps{1}.radius = 0.010 ;
 
 
 % x_fp_0 = [+0.00];
@@ -137,7 +137,7 @@ fps{1}.radius = 0.006 ;
 % i_fp_0 = m_mr * ones(1, length(x_fp_0));
 % %
 % fps{1}.type = 2;
-% fps{1}.length = 0.006;
+% fps{1}.length = 0.010;
 
 % x_fp_0 = [+0.00];
 % y_fp_0 = [+0.05];

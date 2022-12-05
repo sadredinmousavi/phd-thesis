@@ -28,10 +28,10 @@ plotOptionsDyn.areaBorders = 1;
 plotOptionsDyn.robotsTrack = 0;
 plotOptionsDyn.particlesTrack = 0;
 plotOptionsDyn.channelLines = 1;
-plotOptionsDyn.eqPoints = 1;
+plotOptionsDyn.eqPoints = 0;
 plotOptionsDyn.eqPointsTrack = 0;
 plotOptionsDyn.printPsaiValues = 1;
 plotOptionsDyn.printLambdaValues = 1;
 
-plotOutputToGif('94_datas.mat', plotOptionsDyn);
+plotOutputToGif('99_datas.mat', plotOptionsDyn);%97%98
 % plotOutputToGif(vars.fileName3, plotOptionsDyn);
