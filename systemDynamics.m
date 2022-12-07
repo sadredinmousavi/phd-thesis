@@ -27,16 +27,14 @@ Psai = psaiController(t);
 m_mr = inputs.m_mr;
 m_fp = inputs.m_fp;
 i_fp = inputs.i_fp;
-c = inputs.drag_coeff;
+Cd = inputs.drag_coeff;
+Mu = inputs.viscosity;
 mu_0 = inputs.args.mu_0;
-M = inputs.args.M;   
-L = inputs.args.mr.L;
-D = inputs.args.mr.D;
-m_ = M * (pi*D^2/4*L);
-%
+m_ = inputs.args.mr.m / 5e1; %%% note
 threshold = inputs.threshold;
 sigma = inputs.sigma;
 epsilun = inputs.epsilun;
+%
 LJ_potential = @(r)4*epsilun*( (sigma/r)^12 - (sigma/r)^6 );
 LJ_force     = @(r)4*epsilun*( -12*(sigma/r)^12/r + 6*(sigma/r)^6/r );
 % LJ_force     = @(r)4*epsilun*( + 6*(sigma/r)^6/r );
@@ -52,23 +50,35 @@ MorsePotential = @(r) D_e * ( 1-exp(-a*(r-r_e)) )^2;
 % epsilun2 = 0.01;
 % LJ_potential2 = @(r)4*epsilun2*( (sigma2/r)^12 - (sigma2/r)^6 );
 % LJ_force2     = @(r,epsilun)4*epsilun*( -12*(sigma2/r)^12/r + 6*(sigma2/r)^6/r );
-%
+
+% magnethic forces
 for i=1:n
     F = force_field_symbolic(x_mr(i), y_mr(i), Psai);
     fx(i) = F(1);
     fy(i) = F(2);
 end
+% drag forces of MRs
+for i=1:n
+    fx(i) = fx(i) - Mu * inputs.k_mr(1,i) * xd_mr(i);
+    fy(i) = fy(i) - Mu * inputs.k_mr(2,i) * yd_mr(i);
+end
+% drag forces of FPs
+for cnt = 1:m
+    fx(cnt+n) = fx(cnt+n) - Mu * inputs.k_mr(1,i) * xd_fp(cnt) * 5;
+    fy(cnt+n) = fy(cnt+n) - Mu * inputs.k_mr(2,i) * yd_fp(cnt) * 5;
+end
 % interaction force between MRs
 for i=1:n
     for j=1:n
         if i ~= j
-            mr_radius_1 = inputs.r_mr(i);
-            mr_radius_2 = inputs.r_mr(j);
-            r = sqrt( (x_mr(i)-x_mr(j))^2 + (y_mr(i)-y_mr(j))^2 ) - mr_radius_1 - mr_radius_2;
+            vector =  [x_mr(i) y_mr(i)] - [x_mr(j) y_mr(j)]; % direction from j to i
+            mr_radius1 = inputs.r_mr(i);
+            mr_radius2 = inputs.r_mr(j);
+            r1 = norm(vector);
+            r2 = norm(vector) - mr_radius1 - mr_radius2;
             omega = 3*mu_0*m_*m_/4/pi;
-            force = omega / r^4;
-            normal_i = [x_mr(i)-x_mr(j) y_mr(i)-y_mr(j)];  % direction from j to i
-            normal_i = normal_i ./ norm(normal_i);
+            force = omega / r1^4;
+            normal_i = vector ./ norm(vector);
             fx(i) = fx(i) + normal_i(1)*force;
             fy(i) = fy(i) + normal_i(2)*force;
             fx(j) = fx(j) - normal_i(1)*force;
@@ -106,7 +116,7 @@ for cnt = 1:m
             r =  norm(vector) - fp_radius - mr_radius ;
             if r < threshold
                 normal_i = vector ./ norm(vector);
-                reactionForceMax = 1.001 * abs( dot([fx(i) fy(i)], normal_i) );
+                reactionForceMax = 5.001 * abs( dot([fx(i) fy(i)], normal_i) );
                 force = min(LJ_force(r), reactionForceMax); %% note
                 if force < 0
                     force = reactionForceMax;
@@ -126,7 +136,7 @@ for cnt = 1:m
             end
         elseif fp.type == 2
             vector =  [x_fp(cnt) y_fp(cnt)] - [x_mr(i) y_mr(i)];  % direction from mr to fp
-            reactionForceMax = 1.001 * abs( dot([fx(i) fy(i)], normal_i) );
+            reactionForceMax = 10.001 * abs( dot([fx(i) fy(i)], normal_i) );
             fp_length = fp.length;
             theta_vec = atan2(vector(2), vector(1));
             theta_rec = t_fp(cnt);
@@ -191,27 +201,53 @@ for wlt = 1:w
         elseif inputs.walls(1,wlt) == 1
             a=1;
         end
-        if isInContact && r > 0
-            reactionForceMax = 1.001 * abs( dot([fx(i) fy(i)], normal_i) );
+        if isInContact
+            reactionForceMax = 10.001 * abs( dot([fx(i) fy(i)], normal_i) );
             force = min(LJ_force(r), reactionForceMax);
+            if force < 0
+                force = reactionForceMax;
+            end
             fx(i) = fx(i) + normal_i(1)*force;
             fy(i) = fy(i) + normal_i(2)*force;
         end
     end
 end
+% interaction force between Walls and FPs   %% fp type ok shavad
+% for wlt = 1:w
+%     for cnt=1:m
+%         fp = inputs.fps{cnt};
+%         fp_radius = fp.radius;
+%         if inputs.walls(1,wlt) == 0 % wall type
+%             [r,isInContact,normal_i] = calculateDistanceToWallLinear([x_fp(cnt); y_fp(cnt)], inputs.walls(2:5,wlt), threshold + fp_radius);% direction wall to point
+%             r = r - fp_radius;
+%         elseif inputs.walls(1,wlt) == 1
+%             a=1;
+%         end
+%         if isInContact
+%             reactionForceMax = 10.001 * abs( dot([fx(cnt+n) fy(cnt+n)], normal_i) );
+%             force = min(LJ_force(r), reactionForceMax);
+%             if force < 0
+%                 force = reactionForceMax;
+%             end
+%             fx(cnt+n) = fx(cnt+n) + normal_i(1)*force;
+%             fy(cnt+n) = fy(cnt+n) + normal_i(2)*force;
+%         end
+%     end
+% end
+
 
 
 dydt(ind1) = y(ind3);
 dydt(ind2) = y(ind4);
-dydt(ind3) = (fx(ind5,1)-y(ind3).*c)./m_mr';
-dydt(ind4) = (fy(ind5,1)-y(ind4).*c)./m_mr';
+dydt(ind3) = fx(ind5,1)./m_mr';
+dydt(ind4) = fy(ind5,1)./m_mr';
 %
 dydt(ind1_) = y(ind3_);
 dydt(ind2_) = y(ind4_);
-dydt(ind3_) = (fx(ind5_,1)-y(ind3_).*c)./m_fp';
-dydt(ind4_) = (fy(ind5_,1)-y(ind4_).*c)./m_fp';
-dydt(ind6_) = (mo(ind5_,1)-0.*c)./i_fp';
-dydt(ind7_) = (mo(ind5_,1)-0.*c)./i_fp';
+dydt(ind3_) = fx(ind5_,1)./m_fp';
+dydt(ind4_) = fy(ind5_,1)./m_fp';
+dydt(ind6_) = (mo(ind5_,1)-0.*Cd)./i_fp';
+dydt(ind7_) = (mo(ind5_,1)-0.*Cd)./i_fp';
 
 
 

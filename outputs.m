@@ -33,5 +33,5 @@ plotOptionsDyn.eqPointsTrack = 0;
 plotOptionsDyn.printPsaiValues = 1;
 plotOptionsDyn.printLambdaValues = 1;
 
-plotOutputToGif('99_datas.mat', plotOptionsDyn);%97%98
+plotOutputToGif('61_datas.mat', plotOptionsDyn);%97%98
 % plotOutputToGif(vars.fileName3, plotOptionsDyn);

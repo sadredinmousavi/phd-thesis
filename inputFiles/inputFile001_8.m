@@ -15,12 +15,16 @@ args.pm.L = 0.004;
 args.pm.D = 0.002;
 args.pm.m = args.M * (pi*args.pm.D^2/4*args.pm.L);
 % micro robots (agents)
-args.mr.L = 0.0004;
-args.mr.D = 0.0002;
+args.mr.L = 0.004;
+args.mr.D = 0.004;
 args.mr.m = args.M * (pi*args.mr.D^2/4*args.mr.L);
-args.mr.m = args.mr.m * 1e3; %%%%%%%%% note
+args.mr.rho  = 7.5 * 1e6; %Rho_pla = 1.25 g/cm3 Rho_Neodymium = 7.5 g/cm3
+args.mr.mass = 4/3*pi*0.025^3*(3) / 1e3;%4/3*pi*(args.mr.D/2)^3*(args.mr.rho);
+
+args.mr.m = args.mr.m * 0.25e0; %%%%%%%%% note
 args.pm.L = args.pm.L * 1e0; %%%%%%%%% note
 args.pm.D = args.pm.D * 1e0; %%%%%%%%% note
+
 % Lennard Jones potential
 sigma = 1 * 1e-5;
 % epsilun = 1e-10; % 0.01; 1e-8;
@@ -30,7 +34,7 @@ sigma = 1 * 1e-5;
 epsilun = 5e-11; % 1000; 1e-8;
 threshold = 5*sigma; %5*sigma + 0.004;
 % Drag
-drag_coeff = 16/3*0.01*(0.25/1e3);
+drag_coeff = 16/3*0.01*(0.25/1e3);%16/3*0.01*(args.mr.D);
 
 
 
@@ -74,10 +78,8 @@ plotOptionsDyn.printLambdaValues = 1;
 
 
 %% Define MRs locations and parameters
-r_mr = 0.002;
-m_mr = [
-    4/3*pi*0.025^3*(3) / 1e3 %Rho_pla = 1.25 g/cm3 Rho_Neodymium = 7.5 g/cm3 r=0.025 cm
-];
+r_mr = args.mr.D/2;
+m_mr = args.mr.mass;
 %
 center1 = [-0.05, +0.08];
 num1 = 3; %4

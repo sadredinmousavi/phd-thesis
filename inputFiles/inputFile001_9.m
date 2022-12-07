@@ -11,26 +11,37 @@ addpath(genpath('inputFiles'))
 args.mu_0 = 4*pi*1e-7;
 args.M    = 1.2706/args.mu_0;              % Magnetization   [A/m]
 % permanent magnets
-args.pm.L = 0.004;
-args.pm.D = 0.002;
+args.pm.L = 0.020;
+args.pm.D = 0.020;
 args.pm.m = args.M * (pi*args.pm.D^2/4*args.pm.L);
 % micro robots (agents)
-args.mr.L = 0.0004;
-args.mr.D = 0.0002;
+args.mr.L = 0.0008;
+args.mr.D = 0.0008;
 args.mr.m = args.M * (pi*args.mr.D^2/4*args.mr.L);
-args.mr.m = args.mr.m * 1e3; %%%%%%%%% note
-args.pm.L = args.pm.L * 1e0; %%%%%%%%% note
-args.pm.D = args.pm.D * 1e0; %%%%%%%%% note
+args.mr.rho  = 7.5 * 1e3; %Rho_pla = 1.25 g/cm3 Rho_Neodymium = 7.5 g/cm3
+args.mr.mass = 4/3*pi*(args.mr.D/2)^3*(args.mr.rho);
+% free particles
+args.fp.D = 0.010;
+args.fp.rho  = 1.25 * 1e3; %Rho_pla = 1.25 g/cm3 Rho_Neodymium = 7.5 g/cm3
+args.fp.mass = 4/3*pi*(args.fp.D/2)^3*(args.fp.rho);
 % Lennard Jones potential
 sigma = 1 * 1e-5;
 % epsilun = 1e-10; % 0.01; 1e-8;
 % threshold = 5*sigma;
-% epsilun = 1; % 1000; 1e-8;
-% threshold = 5*sigma + 0.001; %5*sigma + 0.004;
-epsilun = 5e-10; % 1000; 1e-8;
-threshold = 5*sigma; %5*sigma + 0.004;
+epsilun = 10; % 1000; 1e-8;
+threshold = 5*sigma + 0.002; %5*sigma + 0.004;
+% epsilun = 5e-10; % 1000; 1e-8;
+% threshold = 5*sigma; %5*sigma + 0.004;
 % Drag
-drag_coeff = 16/3*0.01*(0.25/1e3);
+drag_coeff = 16/3;
+viscosity = 0.01 * 5;
+
+
+args.mr.m = args.mr.m * 1e0; %%%%%%%%% note
+args.pm.L = args.pm.L * 1e0; %%%%%%%%% note
+args.pm.D = args.pm.D * 1e0; %%%%%%%%% note
+args.mr.mass = args.mr.mass * 1e1; %%%%%%%%% note
+args.fp.mass = args.fp.mass * 1e1; %%%%%%%%% note
 
 
 
@@ -74,13 +85,11 @@ plotOptionsDyn.printLambdaValues = 1;
 
 
 %% Define MRs locations and parameters
-r_mr = 0.002;
-m_mr = [
-    4/3*pi*0.025^3*(3) / 1e3 %Rho_pla = 1.25 g/cm3 Rho_Neodymium = 7.5 g/cm3 r=0.025 cm
-];
+r_mr = args.mr.D/2;
+m_mr = args.mr.mass;
 %
 center1 = [-0.05, +0.08];
-num1 = 3; %4
+num1 = 5; %4
 offset1 = 0.02;
 x_serie1 = linspace(center1(1)-offset1, center1(1)+offset1, num1);
 y_serie1 = linspace(center1(2)-offset1, center1(2)+offset1, num1);
@@ -88,7 +97,7 @@ y_serie1 = linspace(center1(2)-offset1, center1(2)+offset1, num1);
 x_mr_1 = reshape(x_mr__, 1, []);
 y_mr_1 = reshape(y_mr__, 1, []);
 center2 = [+0.05, +0.08];
-num2 = 3; %4
+num2 = 5; %4
 offset2 = 0.02;
 x_serie2 = linspace(center2(1)-offset2, center2(1)+offset2, num2);
 y_serie2 = linspace(center2(2)-offset2, center2(2)+offset2, num2);
@@ -100,11 +109,16 @@ x_mr_0 = [x_mr_1 x_mr_2];
 y_mr_0 = [y_mr_1 y_mr_2];
 r_mr_0 = r_mr * ones(1, length(x_mr_0));
 m_mr_0 = m_mr * ones(1, length(x_mr_0));
+k_mr_0 = (16/3 * r_mr) * ones(2, length(x_mr_0));
 
 %% Define Free particles locations
 % % type 1 --> circle
 % % type 2 --> rectngle
 % % type 3 --> linear
+r_fp = args.fp.D/2;
+m_fp = args.fp.mass;
+%
+
 
 % x_fp_0 = [+0.00 +0.00];
 % y_fp_0 = [+0.08 +0.04];
@@ -123,27 +137,29 @@ m_mr_0 = m_mr * ones(1, length(x_mr_0));
 % x_fp_0 = [+0.00];
 % y_fp_0 = [+0.05 ];
 % t_fp_0 = [+0.00];
-% m_fp_0 = m_mr * ones(1, length(x_fp_0));
-% i_fp_0 = m_mr * ones(1, length(x_fp_0));
+% m_fp_0 = m_fp * ones(1, length(x_fp_0));
+% i_fp_0 = m_fp * ones(1, length(x_fp_0));
 % %
 % fps{1}.type = 1;
-% fps{1}.radius = 0.006 ;
+% fps{1}.radius = r_fp ;
+% fps{1}.K = [16/3 16/3] * r_fp ;
 
 
-% x_fp_0 = [+0.00];
-% y_fp_0 = [+0.05];
-% t_fp_0 = [+0.00];
-% m_fp_0 = m_mr * ones(1, length(x_fp_0));
-% i_fp_0 = m_mr * ones(1, length(x_fp_0));
-% %
-% fps{1}.type = 2;
-% fps{1}.length = 0.006;
+x_fp_0 = [+0.00];
+y_fp_0 = [+0.05];
+t_fp_0 = [+0.00];
+m_fp_0 = m_mr * ones(1, length(x_fp_0));
+i_fp_0 = m_mr * ones(1, length(x_fp_0));
+%
+fps{1}.type = 2;
+fps{1}.length = 0.010;
+fps{1}.K = [16/3 16/3] ;
 
-% x_fp_0 = [+0.00];
-% y_fp_0 = [+0.05];
-% t_fp_0 = [+0.00];
-% m_fp_0 = m_mr * ones(1, length(x_fp_0));
-% i_fp_0 = m_mr * ones(1, length(x_fp_0));
+x_fp_0 = [+0.00];
+y_fp_0 = [+0.05];
+t_fp_0 = [+0.00];
+m_fp_0 = m_mr * ones(1, length(x_fp_0));
+i_fp_0 = m_mr * ones(1, length(x_fp_0));
 % 
 % fps{1}.type = 3;
 % fps{1}.points = 0.004 * [ [-1;-1] [+1;-1] [+1;+1] [-1;+1] ];
@@ -159,8 +175,12 @@ m_mr_0 = m_mr * ones(1, length(x_mr_0));
 eqPoint1 = [ [0;-0.05;+0.00] [100;-0.05;+0.02] [200;-0.05;+0.04] [250;-0.03;+0.07] [300;-0.01;+0.09] [400;+0.00;+0.10] [500;+0.00;+0.05] [600;+0.00;+0.00] ];
 eqPoint2 = [ [0;+0.05;+0.00] [100;+0.05;+0.02] [200;+0.05;+0.04] [250;+0.03;+0.07] [300;+0.01;+0.09] [400;+0.00;+0.10] [500;+0.00;+0.05] [600;+0.00;+0.00] ];
 
-eqPoint1 = [ [0;-0.05;+0.08] [50;-0.05;+0.07] [100;-0.03;+0.06] [150;-0.00;+0.05] [200;-0.00;+0.02] [300;+0.00;-0.04] [400;+0.00;-0.07] [500;+0.03;-0.09] [600;+0.05;-0.09] [700;+0.09;-0.09] [800;+0.13;-0.09] [1000;+0.14;-0.06] [1200;+0.14;-0.00] ];
-eqPoint2 = [ [0;+0.05;+0.08] [50;+0.05;+0.07] [100;+0.03;+0.06] [150;+0.00;+0.05] [200;+0.00;+0.02] [300;+0.00;-0.04] [400;+0.00;-0.07] [500;+0.03;-0.09] [600;+0.05;-0.09] [700;+0.09;-0.09] [800;+0.13;-0.09] [1000;+0.14;-0.06] [1200;+0.14;-0.00] ];
+eqPoint1 = [ [0;-0.05;+0.08] [50;-0.05;+0.07] [100;-0.03;+0.06] [150;-0.00;+0.05] [200;-0.00;+0.03] [300;+0.00;+0.01] [400;+0.00;-0.01] [500;+0.00;-0.05] [600;+0.00;-0.07] [700;+0.03;-0.09] [800;+0.05;-0.09] [900;+0.09;-0.09] [1000;+0.13;-0.09] [1100;+0.14;-0.06] [1200;+0.14;-0.00] ];
+eqPoint2 = [ [0;+0.05;+0.08] [50;+0.05;+0.07] [100;+0.03;+0.06] [150;+0.00;+0.05] [200;+0.00;+0.03] [300;+0.00;+0.01] [400;+0.00;-0.01] [500;+0.00;-0.05] [600;+0.00;-0.07] [700;+0.03;-0.09] [800;+0.05;-0.09] [900;+0.09;-0.09] [1000;+0.13;-0.09] [1100;+0.14;-0.06] [1200;+0.14;-0.00] ];
+
+% eqPoint1 = [ [0;-0.05;+0.08] [50;-0.05;+0.07] [70;-0.03;+0.06] [100;-0.00;+0.05] [130;-0.00;+0.02] [160;+0.00;-0.04] [200;+0.00;-0.07] [250;+0.03;-0.09] [300;+0.05;-0.09] [350;+0.09;-0.09] [400;+0.13;-0.09] [450;+0.14;-0.06] [500;+0.14;-0.00] ];
+% eqPoint2 = [ [0;+0.05;+0.08] [50;+0.05;+0.07] [70;+0.03;+0.06] [100;+0.00;+0.05] [130;+0.00;+0.02] [160;+0.00;-0.04] [200;+0.00;-0.07] [250;+0.03;-0.09] [300;+0.05;-0.09] [350;+0.09;-0.09] [400;+0.13;-0.09] [450;+0.14;-0.06] [500;+0.14;-0.00] ];
+
 
 % eqPoint1 = [ [0;-0.05;+0.00] [100;-0.05;+0.02] [200;-0.05;+0.04] [250;-0.03;+0.07] [300;-0.01;+0.09] [400;+0.00;+0.10] [500;+0.00;+0.08] ];
 % eqPoint2 = [ [0;+0.05;+0.00] [100;+0.05;+0.02] [200;+0.05;+0.04] [250;+0.03;+0.07] [300;+0.01;+0.09] [400;+0.00;+0.10] [500;+0.00;+0.08] ];
@@ -171,7 +191,7 @@ eqPoints{2} = eqPoint2;
 
 %
 %
-endTime = max(eqPoint1(1,end),eqPoint2(1,end)) + 200;
+endTime = max(eqPoint1(1,end),eqPoint2(1,end)) + 100;
 startTime = 0;
 stepForSolve = 0.01;
 stepForOutput = 10;

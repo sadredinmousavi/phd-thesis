@@ -13,6 +13,7 @@ vars.args = args;
 vars.sigma = sigma;
 vars.epsilun = epsilun;
 vars.drag_coeff = drag_coeff;
+vars.viscosity = viscosity;
 vars.threshold = threshold;
 
 
@@ -79,6 +80,7 @@ vars.x_mr_0 = x_mr_0;
 vars.y_mr_0 = y_mr_0;
 vars.r_mr_0 = r_mr_0;
 vars.m_mr_0 = m_mr_0;
+vars.k_mr_0 = k_mr_0;
 
 %% Define FPs locations
 if exist('x_fp_0', 'var') == 1
