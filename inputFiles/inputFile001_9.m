@@ -145,25 +145,27 @@ m_fp = args.fp.mass;
 % fps{1}.K = [16/3 16/3] * r_fp ;
 
 
-x_fp_0 = [+0.00];
-y_fp_0 = [+0.05];
-t_fp_0 = [+0.00];
-m_fp_0 = m_mr * ones(1, length(x_fp_0));
-i_fp_0 = m_mr * ones(1, length(x_fp_0));
-%
-fps{1}.type = 2;
-fps{1}.length = 0.010;
-fps{1}.K = [16/3 16/3] ;
-
-x_fp_0 = [+0.00];
-y_fp_0 = [+0.05];
-t_fp_0 = [+0.00];
-m_fp_0 = m_mr * ones(1, length(x_fp_0));
-i_fp_0 = m_mr * ones(1, length(x_fp_0));
+% x_fp_0 = [+0.00];
+% y_fp_0 = [+0.05];
+% t_fp_0 = [+0.00];
+% m_fp_0 = m_mr * ones(1, length(x_fp_0));
+% i_fp_0 = m_mr * ones(1, length(x_fp_0));
 % 
-% fps{1}.type = 3;
-% fps{1}.points = 0.004 * [ [-1;-1] [+1;-1] [+1;+1] [-1;+1] ];
+% fps{1}.type = 2;
+% fps{1}.length = 0.010;
+% fps{1}.K = [16/3 16/3] ;
 
+
+
+x_fp_0 = [+0.00];
+y_fp_0 = [+0.05];
+t_fp_0 = [+0.00];
+m_fp_0 = m_mr * ones(1, length(x_fp_0));
+i_fp_0 = m_mr * ones(1, length(x_fp_0));
+
+fps{1}.type = 3;
+fps{1}.points = 0.004 * [ [-1;-1] [+1;-1] [+1;+1] [-1;+1] ];
+fps{1}.K = [16/3 16/3] ;
 
 
 

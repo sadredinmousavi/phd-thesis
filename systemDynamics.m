@@ -136,6 +136,7 @@ for cnt = 1:m
             end
         elseif fp.type == 2
             vector =  [x_fp(cnt) y_fp(cnt)] - [x_mr(i) y_mr(i)];  % direction from mr to fp
+            normal_i = vector ./ norm(vector);
             reactionForceMax = 10.001 * abs( dot([fx(i) fy(i)], normal_i) );
             fp_length = fp.length;
             theta_vec = atan2(vector(2), vector(1));
@@ -168,7 +169,11 @@ for cnt = 1:m
                 [r,isInContact,normal_i] = calculateDistanceToWallLinear([x_mr(i); y_mr(i)], wall{j}, threshold + mr_radius);% direction wall to point
                 r = r - mr_radius;
                 if isInContact
-                    force = min(LJ_force(r), contactForceaMax); %% note
+                    reactionForceMax = 10.001 * abs( dot([fx(i) fy(i)], normal_i) );
+                    force = min(LJ_force(r), reactionForceMax); %% note
+                    if force < 0
+                        force = reactionForceMax;
+                    end
                     fx_buff = fx_buff + normal_i(1)*force;
                     fy_buff = fy_buff + normal_i(2)*force;
 %                     mo_buff = mo_buff + normal_i(2)*force;
