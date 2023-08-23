@@ -49,8 +49,8 @@ args.fp.mass = args.fp.mass * 1e0; %%%%%%%%% note
 
 %% Define PMs locations
 % values --> [x y z m_norm mu_0 m_agents]  for PMs
-magNum = 8;
-a = 0.25;
+magNum = 4;
+a = 0.15;
 z = 0.0;
 for i=1:magNum
     phi(i) = (0 + (i-1)*(360/magNum) )*(pi/180);
@@ -159,15 +159,15 @@ m_fp = args.fp.mass;
 
 
 
-x_fp_0 = [+0.00];
-y_fp_0 = [+0.05];
-t_fp_0 = [+0.00];
-m_fp_0 = m_mr * ones(1, length(x_fp_0));
-i_fp_0 = m_mr * ones(1, length(x_fp_0));
-
-fps{1}.type = 3;
-fps{1}.points = 0.004 * [ [-1;-1] [+1;-1] [+1;+1] [-1;+1] ];
-fps{1}.K = [16/3 16/3] ;
+% x_fp_0 = [+0.00];
+% y_fp_0 = [+0.05];
+% t_fp_0 = [+0.00];
+% m_fp_0 = m_mr * ones(1, length(x_fp_0));
+% i_fp_0 = m_mr * ones(1, length(x_fp_0));
+% 
+% fps{1}.type = 3;
+% fps{1}.points = 0.004 * [ [-1;-1] [+1;-1] [+1;+1] [-1;+1] ];
+% fps{1}.K = [16/3 16/3] ;
 
 
 
