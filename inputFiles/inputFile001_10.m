@@ -50,7 +50,7 @@ args.fp.mass = args.fp.mass * 1e0; %%%%%%%%% note
 %% Define PMs locations
 % values --> [x y z m_norm mu_0 m_agents]  for PMs
 magNum = 4;
-a = 0.15;
+a = 0.14;
 z = 0.0;
 for i=1:magNum
     phi(i) = (0 + (i-1)*(360/magNum) )*(pi/180);
@@ -63,7 +63,7 @@ findEqFromMinimization = 0;
 
 
 %% Define space and plot parameters and options
-domain = max(a) - 0.12;
+domain = 0.05; % domain = max(a) - 0.12;
 step   = 0.01;
 plotDomain = max(a) + 0.02;
 spaceRegion = -domain:step:domain;
