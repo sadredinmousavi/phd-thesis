@@ -249,6 +249,57 @@ end
 
 
 
+%% calculate Psai_0 in order to have equilibrium in 2 points (using 4 or 6 magnets) --> for all of eqpoints
+dlgTitle    = 'Hand Calculations for path';
+dlgQuestion = 'Do you want all of the eqPoint calculations to be done ?';
+choice = questdlg(dlgQuestion,dlgTitle,'Yes','No', 'Yes');
+if strcmp(choice, 'Yes') == 1
+    
+    for i=1:size(eqPoints{1},2)
+        eq_points_{1} = [eqPoints{1}(2,i) eqPoints{1}(3,i)];
+        eq_points_{2} = [eqPoints{2}(2,i) eqPoints{2}(3,i)];
+        vars.plotOptions.static.plotEqPoints = 1;
+        vars.plotOptions.static.printLambdaValues = 1;
+        vars.plotOptions.static.printPsaiValues = 1;
+        vars.plotOptions.static.eq_points = eq_points_;
+    
+%         [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_points_, MagPos, 90*(pi/180));
+        [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_points_, MagPos);
+        allPsais(i,:) = Psai;
+        printFig2(vars, Psai, 0);
+%         PsaiSerie = otherOutputs.PsaiSerie;
+%         for cnt=1:length(PsaiSerie)
+%             Psai = PsaiSerie(:,cnt);
+%             printFig(vars, Psai, 0);
+%         end
+    
+        %
+        [Fx1, Fy1, Fz1] = CylFfield3(Psai,eq_points_{1});
+        [Bx1, By1, Bz1] = CylBfield3(Psai,eq_points_{1});
+        %
+        [Fx2, Fy2, Fz2] = CylFfield3(Psai,eq_points_{2});
+        [Bx2, By2, Bz2] = CylBfield3(Psai,eq_points_{2});
+        %
+%         printFig(vars, Psai, 0);
+        %
+%         [V,D] = eig(hessian.point1); % V(:,i)
+%         angle1_point1 = atan(V(2,1)/V(1,1))*(180/pi);
+%         angle2_point1 = atan(V(2,2)/V(1,2))*(180/pi);
+%         d1_point1 = D(1,1);
+%         d2_point1 = D(2,2);
+%         [V,D] = eig(hessian.point2); % V(:,i)
+%         angle1_point2 = atan(V(2,1)/V(1,1))*(180/pi);
+%         angle2_point2 = atan(V(2,2)/V(1,2))*(180/pi);
+%         d1_point2 = D(1,1);
+%         d2_point2 = D(2,2);
+    end
+
+
+
+end
+
+
+
 
 %%
 cd('data')
