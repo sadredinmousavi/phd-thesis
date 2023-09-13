@@ -62,7 +62,7 @@ for i=1:magNum
     values(i,:) = [a*cos(phi(i)) a*sin(phi(i)) z args.pm.m args.mu_0 args.mr.m];
 end
 % % calcPsaiFromEqFunc = @check_6PM; %check_6PM %check_6PM %check_6PM3 %calculatePsai_6PM
-calcPsaiFromEqFunc = @calculatePsai_minimization;
+calcPsaiFromEqFunc = @calculatePsai_4PM; %@calculatePsai_minimization;
 symbolicFunctionHandle = @symbolic_fun_b;
 findEqFromMinimization = 0;
 
