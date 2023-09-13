@@ -28,7 +28,7 @@
 plotOptionsDyn.fieldVectors = 1;
 plotOptionsDyn.magnets = 1;
 plotOptionsDyn.areaBorders = 1;
-plotOptionsDyn.robotsTrack = 1;
+plotOptionsDyn.robotsTrack = 0;
 plotOptionsDyn.particlesTrack = 0;
 plotOptionsDyn.channelLines = 1;
 plotOptionsDyn.eqPoints = 0;
