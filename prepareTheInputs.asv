@@ -294,18 +294,14 @@ if strcmp(choice, 'Yes') == 1
 %         d2_point2 = D(2,2);
     end
     
-    fileID = fopen('lab_3d_helmholtz.txt','w');
+    fileID = fopen (sprintf ('lab_3d_helmholtz.txt','w');
     for i=1:size(allPsais, 1)
         fprintf (fileID, 'moveArray([');
         for j=1:size(allPsais, 2)
-            if j>1
-                fprintf (fileID, ',', allPsais(i, j)*(180/pi) );
-            end
-            fprintf (fileID, '%+2.0f', allPsais(i, j)*(180/pi) );
+            fprintf (fileID, '%d', allPsais(i, j)*(180/pi) );
+            if j
         end
-        fprintf (fileID, '],5 , 180)\n');
     end
-    fclose(fileID);
 
 
 

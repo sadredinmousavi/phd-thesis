@@ -95,7 +95,7 @@ plotOptionsDyn.printLambdaValues = 1;
 r_mr = args.mr.D/2;
 m_mr = args.mr.mass;
 %
-center1 = [-0.05, +0.08];
+center1 = [-0.03, +0.03];
 num1 = 3; %4
 offset1 = 0.02;
 x_serie1 = linspace(center1(1)-offset1, center1(1)+offset1, num1);
@@ -103,7 +103,7 @@ y_serie1 = linspace(center1(2)-offset1, center1(2)+offset1, num1);
 [x_mr__,y_mr__] = meshgrid(x_serie1,y_serie1);
 x_mr_1 = reshape(x_mr__, 1, []);
 y_mr_1 = reshape(y_mr__, 1, []);
-center2 = [+0.05, +0.08];
+center2 = [+0.03, +0.03];
 num2 = 3; %4
 offset2 = 0.02;
 x_serie2 = linspace(center2(1)-offset2, center2(1)+offset2, num2);
