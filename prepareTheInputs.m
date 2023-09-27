@@ -266,7 +266,7 @@ if strcmp(choice, 'Yes') == 1
 %         [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_points_, MagPos, 90*(pi/180));
         [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_points_, MagPos);
         allPsais(i,:) = Psai;
-%         printFig2(vars, Psai, 0);
+        printFig2(vars, Psai, 0);
 %         PsaiSerie = otherOutputs.PsaiSerie;
 %         for cnt=1:length(PsaiSerie)
 %             Psai = PsaiSerie(:,cnt);
