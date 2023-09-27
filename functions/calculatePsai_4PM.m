@@ -10,7 +10,13 @@ function [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = calcula
     %
     myFun = @(psai)  norm( coeff*cos(psai) ) ;
     [V, D] = eig(coeff);
-    Psai = acos( real( V(:,1) ));
+    indice = 1;
+    for i=1:size(coeff, 1)
+        if D(i,i) == 0
+            indice = i;
+        end
+    end
+    Psai = acos( real( V(:,indice) ));
     error = myFun(Psai);
     
     
@@ -18,17 +24,18 @@ function [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = calcula
     
     %
     
-    A = [];
-    b = [];
-    Aeq = [];
-    beq = [];
-    lb  = ones(1,size(MagPos,1))* 000 *pi/180;
-    ub  = ones(1,size(MagPos,1))* 090 *pi/180;
-    psai_0 = ones(1,size(MagPos,1))* 180 *pi/180;
-    psai_0 = lb;
-    [psai123,fval,exitflag,output] = fmincon(myFun,psai_0',A,b,Aeq,beq,lb',ub');
-    error = myFun(psai123);
-    Psai = psai123;
+%     A = [];
+%     b = [];
+%     Aeq = [];
+%     beq = [];
+%     lb  = ones(1,size(MagPos,1))* 000 *pi/180;
+%     ub  = ones(1,size(MagPos,1))* 090 *pi/180;
+%     lb  = - ub;
+%     psai_0 = ones(1,size(MagPos,1))* 030 *pi/180;
+% %     psai_0 = lb;
+%     [psai123,fval,exitflag,output] = fmincon(myFun,psai_0',A,b,Aeq,beq,lb',ub');
+%     error = myFun(psai123);
+%     Psai = psai123;
     
     %
     hasAns = 1;
