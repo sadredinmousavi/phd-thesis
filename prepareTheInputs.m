@@ -304,7 +304,7 @@ if strcmp(choice, 'Yes') == 1
             end
             fprintf (fileID, '%+2.0f', allPsais(i, j)*(180/pi) );
         end
-        fprintf (fileID, '],5 , 180)\n');
+        fprintf (fileID, '],2 , 180)\n');
     end
     fclose(fileID);
 
