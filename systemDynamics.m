@@ -30,7 +30,7 @@ i_fp = inputs.i_fp;
 Cd = inputs.drag_coeff;
 Mu = inputs.viscosity;
 mu_0 = inputs.args.mu_0;
-m_ = inputs.args.mr.m / 5e1; %%% note
+m_ = inputs.args.mr.m / 1e0; %%% note
 threshold = inputs.threshold;
 sigma = inputs.sigma;
 epsilun = inputs.epsilun;
@@ -51,7 +51,7 @@ MorsePotential = @(r) D_e * ( 1-exp(-a*(r-r_e)) )^2;
 % LJ_potential2 = @(r)4*epsilun2*( (sigma2/r)^12 - (sigma2/r)^6 );
 % LJ_force2     = @(r,epsilun)4*epsilun*( -12*(sigma2/r)^12/r + 6*(sigma2/r)^6/r );
 
-% magnethic forces
+% magnetic forces
 for i=1:n
     F = force_field_symbolic(x_mr(i), y_mr(i), Psai);
     fx(i) = F(1);
@@ -239,6 +239,7 @@ end
 %         end
 %     end
 % end
+
 
 
 

@@ -28,7 +28,7 @@ for i=1:size(ans1,1)
     for j=1:n
         x_mr = ans1(i,j);
         y_mr = ans1(i,n+j);
-        r_mr = inputs.r_mr(j);
+        r_mr = inputs.r_mr(j)*3; %%%note
         position = [x_mr-r_mr, y_mr-r_mr, 2*r_mr, 2*r_mr];
         rectangle('Position',position,'Curvature',1,'FaceColor','b','EdgeColor','none')
     end
