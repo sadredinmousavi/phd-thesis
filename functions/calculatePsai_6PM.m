@@ -1,6 +1,7 @@
 function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculatePsai_6PM(points, MagPos)
     
     [r1, a1, b1, c1] = calculateParamsFromPoint(points{1}, MagPos);
+    
     [r2, a2, b2, c2] = calculateParamsFromPoint(points{2}, MagPos);
     %
     %
