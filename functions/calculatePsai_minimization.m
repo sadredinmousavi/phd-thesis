@@ -27,7 +27,7 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
     Psai_0 = 0*lb;
     %
     options = optimoptions('fmincon');
-    options = optimoptions(options,'Display', 'off');
+    options = optimoptions(options,'Display', 'off','Algorithm','sqp');
     if nargin > 2
         [Psai1,fval,exitflag,output,lambda1,grad,hessian] = fmincon(costFun,Psai_0,A,b,Aeq,beq,lb,ub,@(Psai) stabilityConstraints(Psai, points, MagPos, lambda), options);
     else

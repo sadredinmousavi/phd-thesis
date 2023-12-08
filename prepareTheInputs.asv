@@ -264,11 +264,10 @@ if strcmp(choice, 'Yes') == 1
         vars.plotOptions.static.eq_points = eq_points_;
     
         if usePreparedPsai
-            Psai = vars.Psai(i,:)';
+            vars.Psai = Psai;
         else
-%             [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_points_, MagPos, 90*(pi/180));
-            [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_points_, MagPos);
-        end
+%         [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_points_, MagPos, 90*(pi/180));
+        [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_points_, MagPos);
         allPsais(i,:) = Psai;
         printFig2(vars, Psai, 0);
 %         PsaiSerie = otherOutputs.PsaiSerie;
