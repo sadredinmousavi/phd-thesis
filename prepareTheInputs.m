@@ -264,7 +264,7 @@ if strcmp(choice, 'Yes') == 1
         vars.plotOptions.static.eq_points = eq_points_;
     
         if usePreparedPsai
-            Psai = vars.Psai(i,:)';
+            Psai = vars.Psai(:,i);
         else
 %             [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_points_, MagPos, 90*(pi/180));
             [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = vars.calcPsaiFromEqFunc(eq_points_, MagPos);
@@ -276,7 +276,7 @@ if strcmp(choice, 'Yes') == 1
 %             Psai = PsaiSerie(:,cnt);
 %             printFig(vars, Psai, 0);
 %         end
-    
+        keyboard
         %
         [Fx1, Fy1, Fz1] = CylFfield3(Psai,eq_points_{1});
         [Bx1, By1, Bz1] = CylBfield3(Psai,eq_points_{1});
