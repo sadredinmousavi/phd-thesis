@@ -10,4 +10,7 @@ function [isStable,hessian] = isHessianStable(Psai, a, b, c)
     else
         isStable = 0;
     end
+%     if d(1) > 0 && d(2) > 0 && ~all( round(Psai,2) == round(pi/2,2) )
+%         isStable = 1;
+%     end
 end

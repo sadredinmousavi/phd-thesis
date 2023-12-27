@@ -10,7 +10,7 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
     myFun2 = @(psai) norm( r1'*cos(psai) ) + norm( r2'*cos(psai) );
       
     index1 = 1; % indexes of two controlling actuators which goes other side of equality
-    index2 = 3;
+    index2 = 6;
     ind1 = setdiff(1:size(coeff,2),[index1, index2]);
     ind2 = [index1, index2];
     Ar = coeff(:,ind1);
@@ -40,6 +40,7 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
                     isStable = 0;
                     continue
                 end
+                
                 break
                 ansCount = ansCount + 1;
                 PsaiSerie(:,ansCount) = Psai;

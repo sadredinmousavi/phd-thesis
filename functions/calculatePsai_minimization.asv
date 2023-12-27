@@ -8,7 +8,7 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
     end
     %
     forceEqs = @(psai) coeff*cos(psai);
-    costFun = @(psai) norm( coeff*cos(psai) )  + max(mean(abs(psai)) - 65*(pi/180), 0) * 1e5;
+    costFun = @(psai) norm( coeff*cos(psai) );
 %     costFun = @(psai) norm( r1'*cos(psai) ) + norm( r2'*cos(psai) ) + norm( r3'*cos(psai) );
 
 %     if nargin < 3
@@ -71,7 +71,7 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
     otherOutputs = 0;
     
     function [c,ceq] = stabilityConstraints(Psai, points, MagPos, extraParam)
-        c = zeros(2*length(points), 1);
+        c = zeros(2*length(points)+1, 1);
         ceq = [];
         for k=1:length(points)
             [r_1, a_1, b_1, c_1] = calculateParamsFromPoint(points{k}, MagPos);
@@ -102,6 +102,7 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
 %         d1(1,1) = -D(1,1);
 %         d1(2,1) = -D(2,2);
 %         c(2*k-1:2*k, 1) = d1;
+        c(end) = sum( abs(Psai) ) /length(Psai) -
     end
     
 end

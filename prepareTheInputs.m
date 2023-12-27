@@ -276,7 +276,7 @@ if strcmp(choice, 'Yes') == 1
 %             Psai = PsaiSerie(:,cnt);
 %             printFig(vars, Psai, 0);
 %         end
-        keyboard
+%         keyboard
         %
         [Fx1, Fy1, Fz1] = CylFfield3(Psai,eq_points_{1});
         [Bx1, By1, Bz1] = CylBfield3(Psai,eq_points_{1});
