@@ -1,4 +1,4 @@
-function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculatePsai_6PM(points, MagPos)
+function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculatePsai_6PM(points, MagPos, lambda, psai_0)
     
     [r1, a1, b1, c1] = calculateParamsFromPoint(points{1}, MagPos);
     
@@ -9,7 +9,7 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
     myFun = @(psai)  norm( coeff*cos(psai) ) ;
     myFun2 = @(psai) norm( r1'*cos(psai) ) + norm( r2'*cos(psai) );
       
-    index1 = 1; % indexes of two controlling actuators which goes other side of equality
+    index1 = 2; % indexes of two controlling actuators which goes other side of equality
     index2 = 6;
     ind1 = setdiff(1:size(coeff,2),[index1, index2]);
     ind2 = [index1, index2];

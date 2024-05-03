@@ -1,4 +1,4 @@
-function [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = calculatePsai_4PM(points, MagPos)
+function [rankM, error, hasAns, isStable, Psai, hessian, otherOutputs] = calculatePsai_4PM(points, MagPos, lambda, psai_0)
     
     [r1, a1, b1, c1] = calculateParamsFromPoint(points{1}, MagPos);
     coeff = r1';
