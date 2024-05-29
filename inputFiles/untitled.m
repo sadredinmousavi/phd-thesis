@@ -30,6 +30,8 @@ args.mr.mass = args.mr.V * (args.mr.rho);
 
 % free particles
 args.fp.rho  = 1.25 * 1e3; %Rho_pla = 1.25 g/cm3 Rho_Neodymium = 7.5 g/cm3
+args.fp.D = 0.010;
+args.fp.mass = 4/3*pi*(args.fp.D/2)^3*(args.fp.rho);
 
 % Lennard Jones potential
 args.sigma = 1 * 1e-5;

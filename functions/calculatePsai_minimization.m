@@ -18,7 +18,7 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
     Psai_0 = lb;
     %
     options = optimoptions('fmincon');
-    options = optimoptions(options,'Display', 'off');
+    options = optimoptions(options,'Display','off','Algorithm','interior-point'); % Iter
     [Psai1,fval,exitflag,output,lambda,grad,hessian] = fmincon(costFun,Psai_0,A,b,Aeq,beq,lb,ub,@(Psai) stabilityConstraints(Psai, points, MagPos), options);
 %     [Psai2,fval,exitflag,output,lambda,grad,hessian] = fmincon(costFun,Psai_0,A,b,Aeq,beq,lb,ub);
 
@@ -57,7 +57,23 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
         d2(1,1) = D(1,1);
         d2(2,1) = D(2,2);
         %
+        threshold = 1.3;
+        if abs(d1(1)) > abs(d1(2))
+            dist1 = ( abs( d1(1)/d1(2) ) - threshold ) * 100;
+        else
+            dist1 = ( abs( d1(2)/d1(1) ) - threshold ) * 100;
+        end
+        if abs(d2(1)) > abs(d2(2))
+            dist2 = ( abs( d2(1)/d2(2) ) - threshold ) * 100;
+        else
+            dist2 = ( abs( d2(2)/d2(1) ) - threshold ) * 100;
+        end
+        %
         c(1:4) = [d1; d2];
+        c(5)   = costFun(Psai);
+        if points{1}(1) == points{2}(1) && points{1}(2) == points{2}(2)
+            c(6:7) = [dist1; dist2];
+        end
         ceq = [];
     end
     
