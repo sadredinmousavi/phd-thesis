@@ -15,7 +15,7 @@ function [rankM,error, hasAns, isStable, Psai, hessian, otherOutputs] = calculat
     lb  = -ones(size(MagPos,1),1)* 090 *pi/180 ;
     ub  = +ones(size(MagPos,1),1)* 090 *pi/180 ;
 %     Psai_0 = ones(size(MagPos,1),1)* 180 *pi/180 ;
-    Psai_0 = lb;
+    Psai_0 = lb*0;
     %
     options = optimoptions('fmincon');
     options = optimoptions(options,'Display','off','Algorithm','interior-point'); % Iter
