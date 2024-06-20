@@ -1,9 +1,9 @@
-d = stepOne("25_object");
-% d.saveToFile("25_object");
+d = stepOne("27_object");
+% d.saveToFile("27_object");
 % pso = [0; 90; 90; 90; 90; 90]*(pi/180);
 % force_field_symbolic(0,0,pso)
 
-% d.setEpmsLoc(8, 0.25, 0);
+% d.setEpmsLoc(8, 0.26, 0);
 % d.saveToFile();
 % 
 % d.args.pm.L = 60 * 1e-3; %[m]
@@ -21,8 +21,8 @@ d.saveToFile
 
 
 clear eqPoints
-eqPoints{1} = convertEqPointRelativeTimeToAbs( [ [0;-0.05;+0.08] [20;-0.05;+0.07] [20;-0.03;+0.06] [30;-0.00;+0.05] [30;-0.00;+0.03] [30;+0.00;+0.01] [30;+0.00;-0.01] [30;+0.00;-0.05] [30;+0.00;-0.07] [20;+0.03;-0.07] [20;+0.05;-0.07] [20;+0.09;-0.07] [20;+0.13;-0.04] [20;+0.12;-0.06] [20;+0.12;-0.00] ]);
-eqPoints{2} = convertEqPointRelativeTimeToAbs( [ [0;+0.05;+0.08] [20;+0.05;+0.07] [20;+0.03;+0.06] [30;+0.00;+0.05] [30;+0.00;+0.03] [30;+0.00;+0.01] [30;+0.00;-0.01] [30;+0.00;-0.05] [30;+0.00;-0.07] [20;+0.03;-0.07] [20;+0.05;-0.07] [20;+0.09;-0.07] [20;+0.13;-0.04] [20;+0.12;-0.06] [20;+0.12;-0.00] ]);
+eqPoints{1} = convertEqPointRelativeTimeToAbs( [ [0;-0.06;+0.00] [20;-0.03;+0.00] [10;+0.00;+0.00] [10;+0.00;+0.03] [10;+0.00;+0.06] [10;+0.00;+0.08] ]);
+eqPoints{2} = convertEqPointRelativeTimeToAbs( [ [0;+0.06;+0.00] [20;+0.03;+0.00] [10;+0.00;+0.00] [10;+0.00;-0.03] [10;+0.00;-0.06] [10;+0.00;-0.08] ]);
 d.setEqPoints(eqPoints);
 d.designPsai();
 d.saveToFile();
@@ -31,7 +31,7 @@ d.saveToFile();
 
 
 % Psai = [-63;-33;-33;-33;-33;-33] * (pi/180);
-Psai = d.designPsaiOutput.Psai_t(:,15);
+Psai = d.designPsaiOutput.Psai_t(:,2);
 d.calcEqPointByDynamics(Psai)
 
 
@@ -44,13 +44,13 @@ d.setWalls(walls);
 d.saveToFile();
 
 clear seedData
-seedData{1}.center = [+0.00, +0.10];
-seedData{1}.num = 5; %4
+seedData{1}.center = [-0.06, +0.00];
+seedData{1}.num = 4; %4
 seedData{1}.offset = 0.02;
 %
-% seedData{2}.center = [+0.06, +0.10];
-% seedData{2}.num = 5; %4
-% seedData{2}.offset = 0.02;
+seedData{2}.center = [+0.06, +0.00];
+seedData{2}.num = 4; %4
+seedData{2}.offset = 0.02;
 %
 d.setMRsLoc(seedData)
 d.saveToFile();
