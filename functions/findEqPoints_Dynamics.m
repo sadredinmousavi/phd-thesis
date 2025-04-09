@@ -25,7 +25,7 @@ function [eq_x,eq_y] = findEqPoints_Dynamics(x, y, Psai, maxTime, doPlot) % Frho
     %
     %
     if doPlot
-        [~, Frho, Faxial] = calculateForceField(x,y,Psai);
+        [F, Frho, Faxial] = calculateForceField(x,y,Psai);
         plot(ans1(end,1:n),ans1(end,n+1:2*n),'b.','MarkerSize', 16);
         hold on
         for j=1:n
@@ -39,7 +39,18 @@ function [eq_x,eq_y] = findEqPoints_Dynamics(x, y, Psai, maxTime, doPlot) % Frho
                 plot(ans1(end,j),ans1(end,n+j),'g.','MarkerSize', 16);
             end
         end
-        keyboard 
+        set(gcf,'units','normalized','outerposition',[0 0 1 1])
+        axis square
+        %
+        figure
+        contour(x,y,F,[0:1e-6:1e-5 1e-4:1e-3:1e-2],'ShowText','on')
+        hold on
+        quiver(x,y,Frho,Faxial)
+        hold off
+        set(gcf,'units','normalized','outerposition',[0 0 1 1])
+        axis square
+        %
+        keyboard
     end
     counter = 0;
     for j=1:n

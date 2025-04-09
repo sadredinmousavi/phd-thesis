@@ -3,8 +3,8 @@ d = stepOne("25_object");
 % pso = [0; 90; 90; 90; 90; 90]*(pi/180);
 % force_field_symbolic(0,0,pso)
 
-d.setEpmsLoc(8, 0.26, 0);
-d.saveToFile();
+% d.setEpmsLoc(8, 0.26, 0);
+% d.saveToFile();
 % 
 % d.args.pm.L = 60 * 1e-3; %[m]
 % d.args.pm.D = 60 * 1e-3; %[m]
@@ -15,17 +15,17 @@ d.saveToFile();
 % d.saveToFile();
 
 
-d.handles.calcPsaiFromEqFunc = @calculatePsai_minimization;%@calculatePsai_minimization_3;%@calculatePsai_6PM; %@calculatePsai_4PM; %@calculatePsai_minimization;
-d.handles.findEqFromMinimization = 0;
-d.saveToFile
+% d.handles.calcPsaiFromEqFunc = @calculatePsai_minimization;%@calculatePsai_minimization_3;%@calculatePsai_6PM; %@calculatePsai_4PM; %@calculatePsai_minimization;
+% d.handles.findEqFromMinimization = 0;
+% d.saveToFile
 
 
-clear eqPoints
-eqPoints{1} = convertEqPointRelativeTimeToAbs( [ [0;-0.00;+0.00] [20;+0.03;+0.04] [20;+0.05;+0.07] [20;+0.00;+0.07] [20;-0.04;+0.07] [20;-0.04;+0.00] [20;-0.02;-0.05] [20;-0.00;+0.00] ]);
-eqPoints{2} = convertEqPointRelativeTimeToAbs( [ [0;+0.00;+0.00] [20;+0.03;+0.04] [20;+0.05;+0.07] [20;+0.00;+0.07] [20;-0.04;+0.07] [20;-0.04;+0.00] [20;-0.02;-0.05] [20;-0.00;+0.00] ]);
-d.setEqPoints(eqPoints);
-d.designPsai();
-d.saveToFile();
+% clear eqPoints
+% eqPoints{1} = convertEqPointRelativeTimeToAbs( [ [0;-0.00;+0.00] [20;+0.03;+0.04] [20;+0.05;+0.07] [20;+0.00;+0.07] [20;-0.04;+0.07] [20;-0.04;+0.00] [20;-0.02;-0.05] [20;-0.00;+0.00] ]);
+% eqPoints{2} = convertEqPointRelativeTimeToAbs( [ [0;+0.00;+0.00] [20;+0.03;+0.04] [20;+0.05;+0.07] [20;+0.00;+0.07] [20;-0.04;+0.07] [20;-0.04;+0.00] [20;-0.02;-0.05] [20;-0.00;+0.00] ]);
+% d.setEqPoints(eqPoints);
+% d.designPsai();
+% d.saveToFile();
 
 
 
