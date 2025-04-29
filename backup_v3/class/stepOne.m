@@ -8,23 +8,27 @@ classdef stepOne < definition
         handles
         savingData
         plotOptions
-    end
-    
-    properties (SetAccess = private)
         symbolicOutput = {}
         designPsaiOutput = {}
         solverInputs = {}
         solverOutputs = {}
+        
     end
     
     methods
         function obj = stepOne(handles, args, configs, plotOptions)
             %STEPONE Construct an instance of this class
             %   Detailed explanation goes here
-            
-            obj = obj.initializePaths();
-            
             if nargin < 2
+                tmp = matlab.desktop.editor.getActive;
+                cd(fileparts(tmp.Filename));
+                cd('..');
+                addpath(genpath('utils'));
+                addpath(genpath('functions'));
+                addpath(genpath('inputFiles'));
+                addpath(genpath('data'));
+                rmpath(genpath('backups'));
+                rmpath(genpath('backup_v2'));
                 obj = loadFromFile(obj, handles);
             else
                 obj.handles = handles;
@@ -32,7 +36,31 @@ classdef stepOne < definition
                 obj.configs = configs;
                 obj.plotOptions = plotOptions;
 
-                obj = obj.setupFilenames();
+                % Define filing configs
+                tmp = matlab.desktop.editor.getActive;
+                cd(fileparts(tmp.Filename));
+                cd('..');
+                addpath(genpath('utils'));
+                addpath(genpath('functions'));
+                addpath(genpath('inputFiles'));
+                addpath(genpath('data'));
+                rmpath(genpath('backups'));
+                rmpath(genpath('backup_v2'));
+                counterName = 1;
+                cd('data')
+                fileName1 = '';
+                while strcmp(fileName1, '')
+                    if isfile([num2str(counterName) '_object.mat'])
+                        counterName = counterName + 1;
+                    else
+                        fileName1 = [num2str(counterName) '_input.mat'];
+                        obj.savingData.fileName1 = [num2str(counterName) '_input.mat'];
+                        obj.savingData.fileName2 = [num2str(counterName) '_movie.gif'];
+                        obj.savingData.fileName3 = [num2str(counterName) '_datas.mat'];
+                        obj.savingData.fileName4 = [num2str(counterName) '_object.mat'];
+                    end
+                end
+                cd('..')
 
                 prepareBeforeRun(obj)
                 saveToFile(obj)
@@ -250,53 +278,6 @@ classdef stepOne < definition
         end
         
         
-    end
-    
-    
-    
-    
-    
-    methods (Access = private)
-        function obj = initializePaths(obj)
-            % Initialize all necessary paths
-            tmp = matlab.desktop.editor.getActive;
-            cd(fileparts(tmp.Filename));
-            cd('..');
-            
-            addpath(genpath('utils'));
-            addpath(genpath('functions'));
-            addpath(genpath('inputFiles'));
-            addpath(genpath('data'));
-            rmpath(genpath('backups'));
-            rmpath(genpath('backup_v2'));
-            rmpath(genpath('backup_v3'));
-        end
-        
-        function obj = setupFilenames(obj)
-            % Generate unique filenames for saving data
-            cd('data');
-            
-            counterName = 1;
-            maxAttempts = 1000;
-            
-            while counterName <= maxAttempts
-                if ~isfile([num2str(counterName) '_object.mat'])
-                    baseName = num2str(counterName);
-                    obj.savingData.fileName1 = [baseName '_input.mat'];
-                    obj.savingData.fileName2 = [baseName '_movie.gif'];
-                    obj.savingData.fileName3 = [baseName '_datas.mat'];
-                    obj.savingData.fileName4 = [baseName '_object.mat'];
-                    break;
-                end
-                counterName = counterName + 1;
-            end
-            
-            if counterName > maxAttempts
-                error('Could not find available filename after %d attempts', maxAttempts);
-            end
-            
-            cd('..');
-        end
     end
 end
 

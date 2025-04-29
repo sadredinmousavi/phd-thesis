@@ -1,5 +1,5 @@
 % d = stepOne("8_object.mat");
-d = stepOne("111_object_2.mat");
+d = stepOne("111_object_1.mat");
 
 % pso = [0; 90; 90; 90; 90; 90]*(pi/180);
 % force_field_symbolic(0,0,pso)
@@ -9,10 +9,9 @@ d = stepOne("111_object_2.mat");
 % d.args.pm.V = d.args.pm.L ^ 3;
 % d.args.pm.m = d.args.M * d.args.pm.V;
 % d.symbolicCalculations();
-d.args.threshold = 5*d.args.sigma + 0.002; %5*sigma + 0.004;
 % d.saveToFile();
 
-% d.handles.findEqFromMinimization = 0;
+d.handles.findEqFromMinimization = 0;
 % d.saveToFile
 % d.designPsai
 
@@ -80,7 +79,7 @@ clear fps
 fps{1}.type = 1;
 fps{1}.center = [+0.00 +0.08];
 fps{1}.theta0 = +0.00;
-fps{1}.radius = 0.014 ;
+fps{1}.radius = 0.010 ;
 fps{1}.height = 0.002 ;
 fps{1}.K = [16/3 16/3] * d.args.fp.D/2 ;
 %
@@ -91,13 +90,13 @@ d.setFPsLoc(fps)
 
 
 
-
 % d.symbolicCalculations();
 % d.designPsai();
 % d.runSimulations();
-% d.saveToFile("111_object_2.mat");
+% d.saveToFile("111_object_1.mat");
 
-plotOptionsDyn.fieldVectors = 0;
+
+plotOptionsDyn.fieldVectors = 1;
 plotOptionsDyn.magnets = 1;
 plotOptionsDyn.areaBorders = 1;
 plotOptionsDyn.robotsTrack = 0;

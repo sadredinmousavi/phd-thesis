@@ -1,5 +1,5 @@
-% d = stepOne("8_object.mat");
-d = stepOne("111_object_2.mat");
+d = stepOne("8_object.mat");
+% d = stepOne("111_object_3.mat");
 
 % pso = [0; 90; 90; 90; 90; 90]*(pi/180);
 % force_field_symbolic(0,0,pso)
@@ -80,7 +80,7 @@ clear fps
 fps{1}.type = 1;
 fps{1}.center = [+0.00 +0.08];
 fps{1}.theta0 = +0.00;
-fps{1}.radius = 0.014 ;
+fps{1}.radius = 0.007 ;
 fps{1}.height = 0.002 ;
 fps{1}.K = [16/3 16/3] * d.args.fp.D/2 ;
 %
@@ -91,11 +91,10 @@ d.setFPsLoc(fps)
 
 
 
-
 % d.symbolicCalculations();
 % d.designPsai();
-% d.runSimulations();
-% d.saveToFile("111_object_2.mat");
+d.runSimulations();
+d.saveToFile("111_object_3.mat");
 
 plotOptionsDyn.fieldVectors = 0;
 plotOptionsDyn.magnets = 1;
