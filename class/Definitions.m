@@ -3,6 +3,7 @@ classdef Definitions
         epms % Struct to store magnet data
         observation   % Stores observation space parameters
         microRobots   % Stores micro robot groups and their properties
+        eq_points % Struct to store equilibrium points and associated times
     end
     
     methods
@@ -11,6 +12,7 @@ classdef Definitions
             obj.epms = struct('inputs', [], 'MagPos', [], 'psai', [], 'm_vector', []);
             obj.observation = struct('x_space', [], 'y_space', [], 'z_obs', [], 'grid', []);
             obj.microRobots = struct('positions', [], 'moments', [], 'masses', []);
+            obj.eq_points = struct('time', [], 'position', []); % Store equilibrium point times and [x, y] positions
         end
         
         % Method to define external magnets
@@ -29,6 +31,7 @@ classdef Definitions
             mu_0 = 4 * pi * 1e-7; % Vacuum permeability [H/m]
             Br = 1.3;             % Magnet Remanence Level [T]
             M = 868e3;            % Magnetization [A/m]
+            Mu = 0.001;           % Dynamic viscosity [Pa·s]
             
             % Parse optional inputs
             for i = 1:2:length(varargin)
@@ -39,6 +42,8 @@ classdef Definitions
                         M = varargin{i+1}; % Override M
                     case 'Br'
                         Br = varargin{i+1}; % Override Br
+                    case 'Mu'
+                        Mu = varargin{i+1}; % Override Mu
                 end
             end
             
@@ -160,6 +165,40 @@ classdef Definitions
             obj.microRobots.masses = allMasses;
             obj.microRobots.defaultMagnetParams = defaultMagnetParams;
         end
+        
+        
+        
+        function obj = defineEquilibriumPoints(obj, times, positions)
+            % Define equilibrium points at specific times and positions.
+            % Inputs:
+            %   times     - A vector of times at which equilibrium points are activated.
+            %   positions - A Nx2 matrix of [x, y] positions for equilibrium points.
+
+            if length(times) ~= size(positions, 1)
+                error('Number of times must match the number of positions.');
+            end
+
+            % Initialize eq_points as an empty array of structs
+            obj.eq_points = struct('time', {}, 'positions', {});
+
+            % Group equilibrium points by unique time values
+            uniqueTimes = unique(times); % Get unique time entries
+
+            for tIdx = 1:length(uniqueTimes)
+                currentTime = uniqueTimes(tIdx);
+                % Find indices where the current time appears in the original time array
+                matchIdx = find(times == currentTime);
+                matchedPositions = positions(matchIdx, :);
+
+                % If positions are identical, keep only one
+                matchedPositions = unique(matchedPositions, 'rows');
+
+                % Store in eq_points struct
+                obj.eq_points(tIdx).time = currentTime;
+                obj.eq_points(tIdx).positions = matchedPositions; % Store all positions active at this time
+            end
+        end
+
         
         
         

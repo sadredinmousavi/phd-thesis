@@ -23,23 +23,99 @@ defs = defs.setObservationSpace([-0.3, 0.3], [-0.3, 0.3], 0, 50);
 
 % Define groups of micro robots
 groupParams = [
-    struct('center', [0.1, 0.1], 'gridSize', [3, 3], 'spacing', [0.05, 0.05]), ...
-    struct('center', [-0.1, -0.1], 'gridSize', [2, 4], 'spacing', [0.04, 0.04])
+    struct('center', [0.01, 0.01], 'gridSize', [3, 3], 'spacing', [0.05, 0.05]), ...
+%     struct('center', [-0.1, -0.1], 'gridSize', [2, 4], 'spacing', [0.04, 0.04])
 ];
 defaultMagnetParams = struct( ...
-    'dimensions', [0.01, 0.01, 0.01], ... % [a, b, c] in meters
-    'M', 868e3, ... % Magnetization [A/m] n35
+    'dimensions', [0.0005, 0.0005, 0.0005], ... % [a, b, c] in meters
+    'M', 1000e3, ... % Magnetization [A/m] n35
     'rho', 7.5e3, ... % Density of material [kg/m^3]
+    'Mu', 0.001, ... % Dynamic viscosity [Pa·s] (default for water)
     'orientation', [0, 0, 1] ...
 );
 
 % Add micro robots to Definitions
 defs = defs.defineMicroRobots(groupParams, defaultMagnetParams);
 
+% Define equilibrium points at times t = 1, 2, and 3 seconds
+eq_times = [10, 10, 20, 20, 30];  % Some times repeat
+eq_positions = [
+     0.02,  0.02;
+     0.02,  0.02;  % Duplicate, should merge into one
+    -0.02, -0.02;
+     0.03 , 0.03;
+     0.0,  0.0
+];
+
+defs = defs.defineEquilibriumPoints(eq_times, eq_positions);
+
+% Check stored equilibrium points
+disp(defs.eq_points);
+
 
 %%
 fieldSim = PermanentMagnetField(defs);
 fieldSim.makeForceFunctionHradCode
+
+
+
+
+%% Run Simulation
+% Create a Simulation instance
+sim = Simulation(defs);
+
+
+% Calculate psai_array for all equilibrium points
+sim = sim.calcEquilibrium();
+
+% Run the simulation for a total duration of 5 seconds
+% sim.runSimulation(5);
+
+
+snapshot_time = 10;  % The time you want to visualize
+idx = find([sim.timed_psai_array.time] == snapshot_time, 1);
+
+if ~isempty(idx)
+    % Find the matching equilibrium point
+    eq_idx = find([sim.defs.eq_points.time] == snapshot_time, 1);
+    
+    % Get the positions exactly as stored (could be 1×2 or N×2 matrix)
+    eq_positions = sim.defs.eq_points(eq_idx).positions;
+    
+    % Plot with the positions
+     sim.plotStaticSnapshot(sim.timed_psai_array(idx).psai_array, eq_positions);
+else
+    fprintf('No equilibrium point found for time %.2f\n', snapshot_time);
+end
+
+
+
+
+
+
+% Assuming you already have a Simulation object 'sim'
+tspan = [0 30]; % 10 second simulation
+% Initial conditions with zero velocity
+initial_positions = sim.defs.microRobots.positions(:,1:2);
+initial_velocities = zeros(size(initial_positions));
+initial_conditions = [initial_positions, initial_velocities];
+
+% Run simulation with drag
+sim = sim.runODESimulation(tspan, initial_conditions);
+
+% Plot results
+% sim.plotTrajectories();
+
+
+% After running your simulation:
+sim.createSimulationVideo('robot_simulation.mp4', ...
+    'FrameRate', 30);
+
+
+
+
+%%
+
 % Retrieve a microrobot's properties (from your Definitions.microRobots.flat list):
 P_robot = defs.microRobots.positions(1, :);  % e.g., first microrobot's position
 % P_robot = [0,0, 0];
@@ -50,7 +126,6 @@ F_net = fieldSim.calculateForceOnMicrorobot(P_robot, m_robot);
 
 
 
-%%
 %% Force Field Visualization in Observation Area
 
 % Retrieve observation grid from defs

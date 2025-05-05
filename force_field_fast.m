@@ -5,7 +5,7 @@ function F_total = force_field_fast(x,y,psai)
 
 mu0 = 1.25664e-06; % Read from obj.mu_0
 % Robot scalar dipole moment (m_robot):
-m_robot = 0.868; % (Computed from pm_robot.M and pm_robot.dimensions)
+m_robot = 0.000125; % (Computed from pm_robot.M and pm_robot.dimensions)
 
 % Initialize force accumulators (Fz = 0 since force is in-plane)
 Fx_total = 0;
@@ -15,8 +15,8 @@ Fy_total = 0;
 r1 = sqrt((x - (2.5000000000e-01))^2 + (y - (0))^2);
 r1_hat_x = (x - (2.5000000000e-01)) / r1;
 r1_hat_y = (y - (0.0000000000e+00)) / r1;
-F1_x = (2.1550852534e-06 / (r1^4)) * cos(psai(1)) * r1_hat_x;
-F1_y = (2.1550852534e-06 / (r1^4)) * cos(psai(1)) * r1_hat_y;
+F1_x = (3.1035213903e-10 / (r1^4)) * cos(psai(1)) * r1_hat_x;
+F1_y = (3.1035213903e-10 / (r1^4)) * cos(psai(1)) * r1_hat_y;
 Fx_total = Fx_total + F1_x;
 Fy_total = Fy_total + F1_y;
 
@@ -24,8 +24,8 @@ Fy_total = Fy_total + F1_y;
 r2 = sqrt((x - (1.7677669530e-01))^2 + (y - (0.176777))^2);
 r2_hat_x = (x - (1.7677669530e-01)) / r2;
 r2_hat_y = (y - (1.7677669530e-01)) / r2;
-F2_x = (2.1550852534e-06 / (r2^4)) * cos(psai(2)) * r2_hat_x;
-F2_y = (2.1550852534e-06 / (r2^4)) * cos(psai(2)) * r2_hat_y;
+F2_x = (3.1035213903e-10 / (r2^4)) * cos(psai(2)) * r2_hat_x;
+F2_y = (3.1035213903e-10 / (r2^4)) * cos(psai(2)) * r2_hat_y;
 Fx_total = Fx_total + F2_x;
 Fy_total = Fy_total + F2_y;
 
@@ -33,8 +33,8 @@ Fy_total = Fy_total + F2_y;
 r3 = sqrt((x - (1.5308084989e-17))^2 + (y - (0.25))^2);
 r3_hat_x = (x - (1.5308084989e-17)) / r3;
 r3_hat_y = (y - (2.5000000000e-01)) / r3;
-F3_x = (2.1550852534e-06 / (r3^4)) * cos(psai(3)) * r3_hat_x;
-F3_y = (2.1550852534e-06 / (r3^4)) * cos(psai(3)) * r3_hat_y;
+F3_x = (3.1035213903e-10 / (r3^4)) * cos(psai(3)) * r3_hat_x;
+F3_y = (3.1035213903e-10 / (r3^4)) * cos(psai(3)) * r3_hat_y;
 Fx_total = Fx_total + F3_x;
 Fy_total = Fy_total + F3_y;
 
@@ -42,8 +42,8 @@ Fy_total = Fy_total + F3_y;
 r4 = sqrt((x - (-1.7677669530e-01))^2 + (y - (0.176777))^2);
 r4_hat_x = (x - (-1.7677669530e-01)) / r4;
 r4_hat_y = (y - (1.7677669530e-01)) / r4;
-F4_x = (2.1550852534e-06 / (r4^4)) * cos(psai(4)) * r4_hat_x;
-F4_y = (2.1550852534e-06 / (r4^4)) * cos(psai(4)) * r4_hat_y;
+F4_x = (3.1035213903e-10 / (r4^4)) * cos(psai(4)) * r4_hat_x;
+F4_y = (3.1035213903e-10 / (r4^4)) * cos(psai(4)) * r4_hat_y;
 Fx_total = Fx_total + F4_x;
 Fy_total = Fy_total + F4_y;
 
@@ -51,8 +51,8 @@ Fy_total = Fy_total + F4_y;
 r5 = sqrt((x - (-2.5000000000e-01))^2 + (y - (3.06162e-17))^2);
 r5_hat_x = (x - (-2.5000000000e-01)) / r5;
 r5_hat_y = (y - (3.0616169979e-17)) / r5;
-F5_x = (2.1550852534e-06 / (r5^4)) * cos(psai(5)) * r5_hat_x;
-F5_y = (2.1550852534e-06 / (r5^4)) * cos(psai(5)) * r5_hat_y;
+F5_x = (3.1035213903e-10 / (r5^4)) * cos(psai(5)) * r5_hat_x;
+F5_y = (3.1035213903e-10 / (r5^4)) * cos(psai(5)) * r5_hat_y;
 Fx_total = Fx_total + F5_x;
 Fy_total = Fy_total + F5_y;
 
@@ -60,8 +60,8 @@ Fy_total = Fy_total + F5_y;
 r6 = sqrt((x - (-1.7677669530e-01))^2 + (y - (-0.176777))^2);
 r6_hat_x = (x - (-1.7677669530e-01)) / r6;
 r6_hat_y = (y - (-1.7677669530e-01)) / r6;
-F6_x = (2.1550852534e-06 / (r6^4)) * cos(psai(6)) * r6_hat_x;
-F6_y = (2.1550852534e-06 / (r6^4)) * cos(psai(6)) * r6_hat_y;
+F6_x = (3.1035213903e-10 / (r6^4)) * cos(psai(6)) * r6_hat_x;
+F6_y = (3.1035213903e-10 / (r6^4)) * cos(psai(6)) * r6_hat_y;
 Fx_total = Fx_total + F6_x;
 Fy_total = Fy_total + F6_y;
 
@@ -69,8 +69,8 @@ Fy_total = Fy_total + F6_y;
 r7 = sqrt((x - (-4.5924254968e-17))^2 + (y - (-0.25))^2);
 r7_hat_x = (x - (-4.5924254968e-17)) / r7;
 r7_hat_y = (y - (-2.5000000000e-01)) / r7;
-F7_x = (2.1550852534e-06 / (r7^4)) * cos(psai(7)) * r7_hat_x;
-F7_y = (2.1550852534e-06 / (r7^4)) * cos(psai(7)) * r7_hat_y;
+F7_x = (3.1035213903e-10 / (r7^4)) * cos(psai(7)) * r7_hat_x;
+F7_y = (3.1035213903e-10 / (r7^4)) * cos(psai(7)) * r7_hat_y;
 Fx_total = Fx_total + F7_x;
 Fy_total = Fy_total + F7_y;
 
@@ -78,8 +78,8 @@ Fy_total = Fy_total + F7_y;
 r8 = sqrt((x - (1.7677669530e-01))^2 + (y - (-0.176777))^2);
 r8_hat_x = (x - (1.7677669530e-01)) / r8;
 r8_hat_y = (y - (-1.7677669530e-01)) / r8;
-F8_x = (2.1550852534e-06 / (r8^4)) * cos(psai(8)) * r8_hat_x;
-F8_y = (2.1550852534e-06 / (r8^4)) * cos(psai(8)) * r8_hat_y;
+F8_x = (3.1035213903e-10 / (r8^4)) * cos(psai(8)) * r8_hat_x;
+F8_y = (3.1035213903e-10 / (r8^4)) * cos(psai(8)) * r8_hat_y;
 Fx_total = Fx_total + F8_x;
 Fy_total = Fy_total + F8_y;
 
