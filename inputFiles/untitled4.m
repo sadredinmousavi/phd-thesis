@@ -40,8 +40,8 @@ defs = defs.defineMicroRobots(groupParams, defaultMagnetParams);
 % Define equilibrium points at times t = 1, 2, and 3 seconds
 eq_times = [10, 10, 20, 20, 30];  % Some times repeat
 eq_positions = [
-     0.02,  0.02;
-     0.02,  0.02;  % Duplicate, should merge into one
+     0.05,  0.05;
+     0.05,  0.05;  % Duplicate, should merge into one
     -0.02, -0.02;
      0.03 , 0.03;
      0.0,  0.0
@@ -76,13 +76,10 @@ snapshot_time = 10;  % The time you want to visualize
 idx = find([sim.timed_psai_array.time] == snapshot_time, 1);
 
 if ~isempty(idx)
-    % Find the matching equilibrium point
     eq_idx = find([sim.defs.eq_points.time] == snapshot_time, 1);
     
-    % Get the positions exactly as stored (could be 1×2 or N×2 matrix)
     eq_positions = sim.defs.eq_points(eq_idx).positions;
     
-    % Plot with the positions
      sim.plotStaticSnapshot(sim.timed_psai_array(idx).psai_array, eq_positions);
 else
     fprintf('No equilibrium point found for time %.2f\n', snapshot_time);

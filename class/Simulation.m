@@ -22,7 +22,6 @@ classdef Simulation
             % Retrieve equilibrium times and positions from Definitions
             eq_times = [obj.defs.eq_points.time];
             eq_positions = {obj.defs.eq_points.positions}; % Cell array for multiple positions per time
-
             numMagnets = obj.defs.epms.inputs.numMagnets;
 
             fprintf('Calculating psai_array for each equilibrium configuration...\n');
@@ -37,17 +36,21 @@ classdef Simulation
                 psai0 = 0.2 * lb; % Small initial guess
 
                 % Define cost function that minimizes force at all target points simultaneously
-                costFun = @(psai) max(arrayfun(@(i) norm(force_field_fast(target_positions(i,1), target_positions(i,2), psai)), ...
-              1:size(target_positions, 1)));
+                costFun = @(psai) obj.computeCost(psai, target_positions);
+
+
+                
 
                 % Improved optimization setup
                 options = optimoptions('fmincon',...
-                    'Display', 'iter',...
-                    'Algorithm', 'sqp',...               % Often better for nonlinear problems
-                    'MaxIterations', 1000,...
-                    'TolFun', 1e-6,...
-                    'TolX', 1e-6,...
-                    'UseParallel', true,...
+                    'SpecifyObjectiveGradient', true,...
+                    'Display', 'final-detailed',...
+                    'Algorithm', 'interior-point', ...  % Better for nonlinear constraints
+                    'MaxIterations', 5000,...
+                    'TolFun', 1e-16, ...    % Tighter tolerance
+                    'TolCon', 1e-16, ...     % Constraint tolerance
+                    'TolX', 1e-16,...
+                    'FiniteDifferenceType', 'central', ... % More accurate derivatives
                     'FiniteDifferenceStepSize', 1e-3);   % Better gradient estimation
 
                 % Multi-start optimization (helps avoid local minima)
@@ -237,7 +240,21 @@ classdef Simulation
         
         
         
-        
+        function [cost, grad] = computeCost(obj, psai, target_positions)
+            cost = 0;
+            grad = zeros(size(psai)); % grad should be 1x8
+            for i = 1:size(target_positions,1)
+                [F, Grad_psai] = force_gradients_fast(target_positions(i,1), target_positions(i,2), psai);
+                F_xy = F(1:2); % Make it row vector (1x2)
+                J = Grad_psai(:,1:2); % Jacobian (8x2)
+
+                % Cost calculation (sum of squared forces)
+                cost = cost + sum(F_xy.^2);
+
+                % Gradient calculation (1x8) = (1x2) * (2x8)
+                grad = grad + 2 * F_xy * J';
+            end
+        end
         
         
         
