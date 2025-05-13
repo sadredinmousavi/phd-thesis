@@ -235,7 +235,6 @@ classdef PermanentMagnetField
 
             num_magnets = size(epms.positions, 1);
             positions = epms.positions(:,1:2);  % Extract XY positions
-            psai_vals = epms.psai;              % Rotation parameters
 
             % Calculate constant coefficient for all magnets:
             % C_i = (3μ₀/4π) * m_source * m_robot (precompute for each magnet)
@@ -279,7 +278,7 @@ classdef PermanentMagnetField
                 % Current magnet parameters
                 px = positions(i,1);
                 py = positions(i,2);
-                C_i = C_base * cos(psai_vals(i));  % Precompute rotation component
+                C_i = C_base;
 
                 % Distance Calculations
                 fprintf(fid, '%% ========== MAGNET %d @ [%.4f, %.4f] ==========\n', i, px, py);
@@ -299,9 +298,9 @@ classdef PermanentMagnetField
                 fprintf(fid, 'F_coeff%d = %.12e / r%d_5;\n', i, C_i, i);
 
                 % X-component
-                fprintf(fid, 'Fx_total = Fx_total + F_coeff%d * dx%d;\n', i, i);
+                fprintf(fid, 'Fx_total = Fx_total + F_coeff%d * dx%d * cos(psai(%d));\n', i, i, i);
                 % Y-component
-                fprintf(fid, 'Fy_total = Fy_total + F_coeff%d * dy%d;\n\n', i, i);
+                fprintf(fid, 'Fy_total = Fy_total + F_coeff%d * dy%d * cos(psai(%d));\n\n', i, i, i);
 
                 % Hessian Components
                 fprintf(fid, '%% ----- Hessian Contribution -----\n');
@@ -311,13 +310,13 @@ classdef PermanentMagnetField
                 fprintf(fid, 'H_coeff%d = %.12e / r%d_7;\n', i, -5*C_i, i);
 
                 % XX component: (1/r^5 - 5*dx²/r^7)
-                fprintf(fid, 'Hxx_total = Hxx_total + (%.12e/r%d_5) + H_coeff%d*dx%d^2;\n', C_i, i, i, i);
+                fprintf(fid, 'Hxx_total = Hxx_total + ( (%.12e/r%d_5) + H_coeff%d*dx%d^2 ) * cos(psai(%d));\n', C_i, i, i, i, i);
 
                 % XY component: -5*dx*dy/r^7
-                fprintf(fid, 'Hxy_total = Hxy_total + H_coeff%d*dx%d*dy%d;\n', i, i, i);
+                fprintf(fid, 'Hxy_total = Hxy_total + ( H_coeff%d*dx%d*dy%d ) * cos(psai(%d));\n', i, i, i, i);
 
                 % YY component: (1/r^5 - 5*dy²/r^7)
-                fprintf(fid, 'Hyy_total = Hyy_total + (%.12e/r%d_5) + H_coeff%d*dy%d^2;\n\n', C_i, i, i, i);
+                fprintf(fid, 'Hyy_total = Hyy_total + ( (%.12e/r%d_5) + H_coeff%d*dy%d^2 ) * cos(psai(%d));\n\n', C_i, i, i, i, i);
             end
 
             % Final Output Assembly

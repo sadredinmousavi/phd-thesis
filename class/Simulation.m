@@ -44,12 +44,12 @@ classdef Simulation
                 % Improved optimization setup
                 options = optimoptions('fmincon',...
                     'SpecifyObjectiveGradient', true,...
-                    'Display', 'final-detailed',...
+                    'Display', 'iter-detailed',...
                     'Algorithm', 'interior-point', ...  % Better for nonlinear constraints
                     'MaxIterations', 5000,...
-                    'TolFun', 1e-16, ...    % Tighter tolerance
-                    'TolCon', 1e-16, ...     % Constraint tolerance
-                    'TolX', 1e-16,...
+                    'TolFun', 1e-9, ...    % Tighter tolerance
+                    'TolCon', 1e-9, ...     % Constraint tolerance
+                    'TolX', 1e-9,...
                     'FiniteDifferenceType', 'central', ... % More accurate derivatives
                     'FiniteDifferenceStepSize', 1e-3);   % Better gradient estimation
 
@@ -240,21 +240,70 @@ classdef Simulation
         
         
         
+%         function [cost, grad] = computeCost(obj, psai, target_positions)
+%             cost = 0;
+%             grad = zeros(size(psai)); % grad should be 1x8
+%             for i = 1:size(target_positions,1)
+%                 [F, Grad_psai] = force_gradients_fast(target_positions(i,1), target_positions(i,2), psai);
+%                 F_xy = F(1:2); % Make it row vector (1x2)
+%                 J = Grad_psai(:,1:2); % Jacobian (8x2)
+% 
+%                 % Calculate the norm of the force vector
+%                 norm_F = sqrt(sum(F_xy.^2));
+% 
+%                 % Cost calculation: sum of force magnitudes
+%                 cost = cost + norm_F;
+% 
+%                 % Gradient calculation using the chain rule:
+%                 % derivative of sqrt(s) with respect to s is 1/(2*sqrt(s)) and ds/dF_xy = 2*F_xy,
+%                 % so the derivative simplifies to F_xy/norm_F.
+%                 if norm_F > 1e-12  % Avoid division by zero for zero force
+%                     grad = grad + (F_xy / norm_F) * J';
+%                 end
+%             end
+%         end
+
+        
         function [cost, grad] = computeCost(obj, psai, target_positions)
             cost = 0;
-            grad = zeros(size(psai)); % grad should be 1x8
+            grad = zeros(size(psai));  % grad should be 1x8
+
+            % Choose a weight for the Hessian eigenvalue penalty.
+            % Adjust this value according to how strongly you want to enforce equal eigenvalues.
+            weight_eig = 1e-5;  
+            weight_eig = 10;
+
             for i = 1:size(target_positions,1)
+                %%%--- Existing Force and Gradient Calculation ---%%%
                 [F, Grad_psai] = force_gradients_fast(target_positions(i,1), target_positions(i,2), psai);
-                F_xy = F(1:2); % Make it row vector (1x2)
-                J = Grad_psai(:,1:2); % Jacobian (8x2)
+                F_xy = F(1:2);  % 1x2 vector (force in x and y)
+                % Assume Grad_psai(:,1:2) contains the Jacobian relating F_xy to psai
+                J = Grad_psai(:,1:2);
 
-                % Cost calculation (sum of squared forces)
-                cost = cost + sum(F_xy.^2);
+                norm_F = sqrt(sum(F_xy.^2));
+                cost = cost + norm_F;
+                if norm_F > 1e-12
+                    % Chain rule calculation (derivative of sqrt(F^2) gives F/||F||)
+                    grad = grad + (F_xy / norm_F) * J';
+                end
 
-                % Gradient calculation (1x8) = (1x2) * (2x8)
-                grad = grad + 2 * F_xy * J';
+                %%%--- New Hessian Eigenvalue Penalty ---%%%
+                % Use the force_field_fast function (which returns Hessian)
+                [~, H] = force_field_fast(target_positions(i,1), target_positions(i,2), psai);
+                eigen_vals = eig(H);  % For the 2×2 Hessian, this returns a 2×1 vector.
+                % Compute the squared difference of the eigenvalues.
+                penalty = weight_eig * (eigen_vals(1) - eigen_vals(2))^2;
+                cost = cost + penalty;
+
+                % Note: Deriving the gradient contribution of this penalty term is non‐trivial.
+                % You have two options:
+                %    (a) If weight_eig is chosen very small, you might assume its gradient is negligible.
+                %    (b) Alternatively, derive the sensitivity of the eigenvalues (using eigenvalue
+                %        perturbation theory) and propagate through psai.
+                % For now, we are not adding an analytical gradient for the penalty term.
             end
         end
+
         
         
         

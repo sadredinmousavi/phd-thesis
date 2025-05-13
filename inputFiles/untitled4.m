@@ -38,13 +38,14 @@ defaultMagnetParams = struct( ...
 defs = defs.defineMicroRobots(groupParams, defaultMagnetParams);
 
 % Define equilibrium points at times t = 1, 2, and 3 seconds
-eq_times = [10, 10, 20, 20, 30];  % Some times repeat
+% eq_times = [10, 10, 20, 20, 30];  % Some times repeat
+eq_times = [10,];
 eq_positions = [
      0.05,  0.05;
-     0.05,  0.05;  % Duplicate, should merge into one
-    -0.02, -0.02;
-     0.03 , 0.03;
-     0.0,  0.0
+%      0.05,  0.05;  % Duplicate, should merge into one
+%     -0.02, -0.02;
+%      0.03 , 0.03;
+%      0.0,  0.0
 ];
 
 defs = defs.defineEquilibriumPoints(eq_times, eq_positions);
@@ -80,7 +81,9 @@ if ~isempty(idx)
     
     eq_positions = sim.defs.eq_points(eq_idx).positions;
     
-     sim.plotStaticSnapshot(sim.timed_psai_array(idx).psai_array, eq_positions);
+    sim.plotStaticSnapshot(sim.timed_psai_array(idx).psai_array, eq_positions);
+    
+%     sim.plotStaticSnapshot(sim.timed_psai_array(2).psai_array, sim.defs.eq_points(2).positions); 
 else
     fprintf('No equilibrium point found for time %.2f\n', snapshot_time);
 end

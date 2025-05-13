@@ -1,0 +1,45 @@
+# MATLAB temporary files and cache
+*.m~  
+*.asv  
+*.bak  
+*.mat  
+*.mlx  
+*.mexa64  
+*.mexmaci64  
+*.mexw64  
+*.slxc  
+*.slx  
+*.mdl  
+*.mex*  
+*.rpt  
+*.log  
+*.out  
+*.err  
+
+# MATLAB autosave and backup files
+*_autosave.mat  
+*_backup.mat  
+
+# MATLAB workspace and session files
+*.mlappinstall  
+*.mlpkginstall  
+*.p  
+*.mexa64  
+*.mexmaci64  
+*.mexw64  
+*.mex*  
+*.slxc  
+
+# Simulink-related files
+simulinkCache/*  
+*.sldd  
+*.slxp  
+
+# Generated code from MATLAB/Simulink
+codegen/  
+
+# MATLAB live scripts cache
+**/resources/**  
+
+# Ignore video files
+*.mp4
