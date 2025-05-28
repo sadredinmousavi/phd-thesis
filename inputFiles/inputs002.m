@@ -33,67 +33,25 @@ defaultMagnetParams = struct( ...
     'Mu', 0.001, ... % Dynamic viscosity [Pa·s] (default for water)
     'orientation', [0, 0, 1] ...
 );
-
-% Add micro robots to Definitions
 defs = defs.defineMicroRobots(groupParams, defaultMagnetParams);
 
 % Define equilibrium points at times t = 1, 2, and 3 seconds
-eq_times = [10, 20, 30, 40, 50];  % Some times repeat
+eq_times = [10, 20, 20, 30, 30];  % Some times repeat
+eq_times = [10, ];  % Some times repeat
 % eq_times = [10,];
 eq_positions = [
-     0.05,  0.05;
-     0.05,  0.00;  % Duplicate, should merge into one
-    -0.05, -0.05;
-    -0.03 , 0.03;
-     0.0,  0.0
+     0.06,  0.06;
+%     -0.05,  0.00;
+%      0.05,  0.00;
+%     -0.15 , 0.00;
+%      0.15 , 0.00;
 ];
 
 
 
 
 
-
-
-eq_times = [10, 20];  % Some times repeat
-eq_positions = [
-     0.00,  0.00;
-     0.05,  0.05;
-];
-
-% Generate circular equilibrium points
-centerPoint = [0.05, 0.05]; 
-r1 = 0.05; 
-N = 8; 
-s1 = 5;
-last_time = eq_times(end);
-[eq_positions_1, eq_times_1] = defs.generateCircularEqPoints(centerPoint, r1, N, s1, last_time);
-
-
-% Generate linear movement points
-startPoint = [0.05, 0.05];  
-endPoint = [-0.05, -0.05];  
-N = 3;  
-s1 = 5;
-last_time = eq_times_1(end);
-[eq_positions_2, eq_times_2] = defs.generateLinearEqPoints(startPoint, endPoint, N, s1, last_time);
-
-
-% Generate circular equilibrium points
-centerPoint = [-0.05, -0.05]; 
-r1 = 0.05; 
-N = 8; 
-s1 = 5;
-last_time = eq_times_2(end);
-[eq_positions_3, eq_times_3] = defs.generateCircularEqPoints(centerPoint, r1, N, s1, last_time);
-
-
-last_time = eq_times_3(end);
-eq_positions = [eq_positions; eq_positions_1; eq_positions_2; eq_positions_3; 0, 0]; 
-eq_times = [eq_times(:); eq_times_1(:); eq_times_2(:); eq_times_3(:); last_time+s1]; 
 defs = defs.defineEquilibriumPoints(eq_times, eq_positions);
-
-% Check stored equilibrium points
-disp(defs.eq_points);
 
 
 %%
@@ -104,41 +62,31 @@ fieldSim.makeForceFunctionHradCode();
 
 
 %% Run Simulation
-% Create a Simulation instance
 sim = Simulation(defs);
 
-
-% Calculate psai_array for all equilibrium points
 useSavedData = false; 
-filename = 'case_001.mat'; 
+filename = 'case_002.mat'; 
 sim = sim.calcEquilibrium(useSavedData, filename);
 
-% Run the simulation for a total duration of 5 seconds
-% sim.runSimulation(5);
 
-
-snapshot_time = 10;  % The time you want to visualize
+snapshot_time = 10;
 idx = find([sim.timed_psai_array.time] == snapshot_time, 1);
 
 if ~isempty(idx)
     eq_idx = find([sim.defs.eq_points.time] == snapshot_time, 1);
-    
     eq_positions = sim.defs.eq_points(eq_idx).positions;
-    
     sim.plotStaticSnapshot(sim.timed_psai_array(idx).psai_array, eq_positions);
-    
 %     sim.plotStaticSnapshot(sim.timed_psai_array(2).psai_array, sim.defs.eq_points(2).positions); 
 else
     fprintf('No equilibrium point found for time %.2f\n', snapshot_time);
 end
-sim.generateExperimentalInputs('experimental_inputs.txt');
+sim.generateExperimentalInputs('experimental_inputs_002.txt');
 
 
 
 
 
-% Assuming you already have a Simulation object 'sim'
-tspan = [0 30]; % 10 second simulation
+tspan = [0 30];
 % Initial conditions with zero velocity
 initial_positions = sim.defs.microRobots.positions(:,1:2);
 initial_velocities = zeros(size(initial_positions));

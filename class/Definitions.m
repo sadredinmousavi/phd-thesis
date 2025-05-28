@@ -202,5 +202,25 @@ classdef Definitions
         
         
         
+        
+        % generate circular equilibrium points
+        function [new_eq_positions, new_eq_times] = generateCircularEqPoints(obj, centerPoint, r1, N, s1, startTime)
+            theta = linspace(0, 2*pi, N);  % Generate N angles
+            circle_x = centerPoint(1) + r1 * cos(theta);
+            circle_y = centerPoint(2) + r1 * sin(theta);
+            
+            new_eq_positions = [circle_x' circle_y']; % Convert to matrix
+            new_eq_times = startTime + (1:N)' * s1;
+        end
+        
+        
+        % Method to generate points along a straight line
+        function [new_eq_positions, new_eq_times] = generateLinearEqPoints(obj, startPoint, endPoint, N, s1, startTime)
+            x_values = linspace(startPoint(1), endPoint(1), N);
+            y_values = linspace(startPoint(2), endPoint(2), N);
+            new_eq_positions = [x_values' y_values']; 
+            new_eq_times = startTime + (1:N)' * s1;
+        end
+        
     end
 end
